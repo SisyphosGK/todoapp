@@ -47,7 +47,10 @@
           />
         </ul>
 
-        <div v-if="todoList.length < 1" class="u-margin-top">Yapılacaklar listesi boş</div>
+        <div v-if="todoList.length < 1" class="u-margin-top">
+          <svg-icon name="IconAlert" title="Uyarı" class="u-color-warning u-font-size-medium" />
+          Yapılacaklar listesi boş
+        </div>
       </div>
     </div>
   </div>

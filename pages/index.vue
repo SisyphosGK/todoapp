@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col col--xs-12 u-text-align-left">
         <h1 class="u-color-muted u-font-weight-600 u-margin-bottom-medium">
-          Hoşgeldin <b class="u-color-primary">Gürkan Köse !</b>
+          Hoşgeldin <b class="u-color-primary">Nietzsche !</b>
         </h1>
       </div>
 
@@ -63,9 +63,7 @@ export default {
   data() {
     return {
       selectedCategory: 'todoApp',
-
       selectedFilter: 'Tümü',
-
       todoInputModel: '',
       todoList: [],
     };
@@ -84,7 +82,6 @@ export default {
       if (this.todoInputModel == '') {
         return;
       }
-      console.log('Eklendi');
 
       let newTask = {
         id: this.todoInputModel + this.todoList.length,
@@ -93,27 +90,20 @@ export default {
       };
 
       this.todoList.push(newTask);
-      console.log(this.todoList);
       this.todoInputModel = '';
     },
 
     onTaskStatusChange(id, status) {
-      console.log('Değişim yapılacak id ve durum: ' + id, status);
       let item = this.todoList.find(i => i.id == id);
-      console.log('Değişim yapılacak item: ' + item);
 
       if (item) {
         item.isDone = status;
       }
-
-      console.log('Değişim sonrası itemlist: ' + this.todoList);
     },
 
     onTaskDelete(id) {
-      console.log(id);
-
       let index = this.todoList.findIndex(i => i.id == id);
-      console.log('Silinmek istenen index: ' + index);
+
       if (index > -1) {
         this.todoList.splice(index, 1);
       }

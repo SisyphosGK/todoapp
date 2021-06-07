@@ -12,6 +12,7 @@
     <component
       :is="tag"
       :id="id ? `input-${id}` : false"
+      ref="input"
       :type="inputType"
       :class="['c-input__control', inputElement === `input` ? null : 'c-input__control--textarea']"
       :maxlength="maxlength ? maxlength : false"
@@ -95,6 +96,14 @@ export default {
     return {
       FILLED_CLASS: 'is-filled',
     };
+  },
+
+  watch: {
+    value: {
+      handler() {
+        this.$refs.input.value = this.value;
+      },
+    },
   },
 };
 </script>

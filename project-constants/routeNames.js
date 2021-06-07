@@ -6,16 +6,20 @@ export const ROUTE_NAMES = {
   //
 
   HOME: {
-    NAME: 'index',
+    NAME: 'Ana Sayfa',
     PATH: '/',
   },
 
-  Project1: {
-    NAME: 'project1',
-    PATH: '/project1',
+  PROJECT1: {
+    NAME: 'Todoapp',
+    PATH: '/projects/TodoApp',
   },
-  Project2: {
-    NAME: 'project2',
-    PATH: '/project2',
+  PROJECT2: {
+    NAME: 'Proje',
+    PATH: '/projects/1',
+  },
+  PROJECT3: {
+    NAME: 'Proje 2',
+    PATH: '/projects/2',
   },
 };

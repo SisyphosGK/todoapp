@@ -1,0 +1,81 @@
+@import '../../assets/styles/abstracts/index';
+
+.c-date-picker {
+  $animation-duration: 1.5s;
+
+  &__text {
+    transition: color $g-transition-duration ease-in-out;
+  }
+
+  &__wrapper {
+    width: 100%;
+
+    .mx-input {
+      height: px-to-rem(41px);
+      border: 0;
+      border-bottom: 1px solid $g-border-color;
+      border-radius: 0;
+      box-shadow: unset;
+      color: $g-text-color;
+      font-size: px-to-em(14px);
+      font-weight: 600;
+    }
+  }
+
+  &.is-valid {
+    $state-color: $color-success;
+
+    .c-date-picker__text {
+      color: $state-color;
+    }
+
+    .mx-input {
+      animation: pulse-valid $animation-duration;
+      border-color: $state-color;
+      color: $state-color;
+
+      // stylelint-disable-next-line selector-max-specificity
+      &::placeholder {
+        color: $state-color;
+      }
+    }
+  }
+
+  &.is-invalid {
+    $state-color: $color-danger;
+
+    .c-date-picker__text {
+      color: $state-color;
+    }
+
+    .mx-input {
+      animation: pulse-invalid $animation-duration;
+      border-color: $state-color;
+      color: $state-color;
+
+      // stylelint-disable-next-line selector-max-specificity
+      &::placeholder {
+        color: $state-color;
+      }
+    }
+  }
+
+  &.is-warning {
+    $state-color: $color-warning;
+
+    .c-date-picker__text {
+      color: $state-color;
+    }
+
+    .mx-input {
+      animation: pulse-warning $animation-duration;
+      border-color: $state-color;
+      color: $state-color;
+
+      // stylelint-disable-next-line selector-max-specificity
+      &::placeholder {
+        color: $state-color;
+      }
+    }
+  }
+}

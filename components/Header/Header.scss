@@ -1,0 +1,42 @@
+@import '../../assets/styles/abstracts/index';
+
+.c-header {
+  $g-transition-timing-function: ease;
+
+  background-color: $color-primary;
+  color: $color-white;
+
+  transition: background-color $g-transition-duration $g-transition-timing-function,
+    color $g-transition-duration $g-transition-timing-function;
+
+  @include media-breakpoint-down(sm) {
+    position: fixed;
+    z-index: $z-index-c-header;
+    top: 0;
+    width: 100%;
+  }
+
+  &__header {
+    display: flex;
+    height: $g-header-height;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 pad(3xlarge) 0 pad(large);
+
+    @include media-breakpoint-down(sm) {
+      height: $g-header-height / 1.75;
+      padding: 0 pad(3xsmall) 0 pad(3xsmall);
+    }
+  }
+
+  &__brand {
+    width: px-to-rem(200px);
+    color: $color-white;
+    font-size: $g-font-size-xlarge;
+
+    @include media-breakpoint-down(sm) {
+      max-width: 100%;
+      padding-right: pad(small);
+    }
+  }
+}

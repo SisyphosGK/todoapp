@@ -1,0 +1,51 @@
+@import '../../assets/styles/abstracts/index';
+
+.c-navbar {
+  overflow: hidden;
+  width: px-to-rem(300px);
+  height: calc(100vh - #{$g-header-height});
+  background-color: lighten($color-nero, 3%);
+  color: $color-white;
+  transition: background-color $g-transition-duration $g-transition-timing-function,
+    color $g-transition-duration $g-transition-timing-function;
+
+  @include media-breakpoint-down(lg) {
+    position: fixed;
+    z-index: $z-index-c-navbar;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: $g-navbar-mobile-height;
+  }
+
+  &__container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    padding-top: pad();
+    @include media-breakpoint-down(lg) {
+      flex-direction: row;
+    }
+  }
+
+  &__link {
+    position: relative;
+    width: 100%;
+    padding: pad(2xsmall) pad(small);
+    color: inherit;
+    font-size: $g-font-size-large;
+    opacity: 0.5;
+    transition: opacity $g-transition-duration ease;
+
+    @include media-breakpoint-down(lg) {
+      padding: pad();
+    }
+
+    &.is-active,
+    &:hover {
+      color: $color-primary;
+      opacity: 1;
+    }
+  }
+}

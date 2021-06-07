@@ -1,0 +1,5 @@
+node_modules
+package.json
+.nuxt
+components/BvtTable/*/bvtnet-items-provider.js
+dist

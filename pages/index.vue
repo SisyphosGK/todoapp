@@ -26,7 +26,7 @@
             <h2 class="u-margin-0">Yapılacaklar</h2>
           </div>
 
-          <div v-if="todoList.length >= 1">
+          <div v-if="todoList.length >= 1" class="o-todo-filter">
             <v-select
               v-model="selectedFilter"
               :options="['Tümü', 'Tamamlanmışlar', 'Devam Edenler']"
@@ -119,5 +119,9 @@ export default {
 
 .o-todo-list {
   @include list-unstyled();
+}
+
+.o-todo-filter {
+  min-width: px-to-rem(200px);
 }
 </style>

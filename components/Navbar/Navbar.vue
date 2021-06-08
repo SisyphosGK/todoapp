@@ -2,27 +2,17 @@
   <nav class="c-navbar">
     <div class="c-navbar__container">
       <button
+        v-for="(link, i) in navLinkDatas"
+        :key="i"
         type="button"
-        :class="['c-navbar__link', ROUTE_NAMES.Project2.PATH === $route.path ? 'is-active' : null]"
-        @click="setTodoCategory()"
+        :class="[
+          'c-navbar__link',
+          'u-cursor-pointer',
+          'u-text-align-left',
+          link.path === $route.path ? 'is-active' : null,
+        ]"
       >
-        <svg-icon name="IconWallet" title="Gurkan Kose" /> Gürkan Köse
-      </button>
-
-      <button
-        type="button"
-        :class="['c-navbar__link', ROUTE_NAMES.Project1.PATH === $route.path ? 'is-active' : null]"
-        @click="setTodoCategory()"
-      >
-        <svg-icon name="IconInvoice" title="Yılmaz Oktav" /> Yılmaz Oktav
-      </button>
-
-      <button
-        type="button"
-        :class="['c-navbar__link', ROUTE_NAMES.HOME.PATH === $route.path ? 'is-active' : null]"
-        @click="setTodoCategory()"
-      >
-        <svg-icon name="IconCheckmark" title="Todoapp" /> Todoapp
+        <svg-icon name="IconWallet" :title="link.name" /> {{ link.name }}
       </button>
     </div>
   </nav>
@@ -35,6 +25,21 @@ export default {
   data() {
     return {
       ROUTE_NAMES,
+
+      navLinkDatas: [
+        {
+          path: ROUTE_NAMES.PROJECT1.PATH,
+          name: ROUTE_NAMES.PROJECT1.NAME,
+        },
+        {
+          path: ROUTE_NAMES.PROJECT2.PATH,
+          name: ROUTE_NAMES.PROJECT2.NAME,
+        },
+        {
+          path: ROUTE_NAMES.PROJECT3.PATH,
+          name: ROUTE_NAMES.PROJECT3.NAME,
+        },
+      ],
     };
   },
 };

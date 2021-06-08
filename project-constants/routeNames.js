@@ -10,6 +10,10 @@ export const ROUTE_NAMES = {
     PATH: '/',
   },
 
+  //
+  // PROJECTS
+  //
+
   PROJECT1: {
     NAME: 'Todoapp',
     PATH: '/projects/TodoApp',
@@ -21,5 +25,14 @@ export const ROUTE_NAMES = {
   PROJECT3: {
     NAME: 'Proje 2',
     PATH: '/projects/2',
+  },
+
+  //
+  // AUTH
+  //
+
+  LOGIN: {
+    NAME: 'login',
+    PATH: '/login',
   },
 };

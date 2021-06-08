@@ -4,8 +4,9 @@
   $themes: (primary, $color-primary), (primaryLight, rgba($color-primary, 0.1));
 
   padding: pad(medium) px-to-rem(56px);
-  background-color: $color-white;
+  background-color: $color-nero;
   border-radius: $g-border-radius;
+  box-shadow: $g-box-shadow-primary;
 
   @include media-breakpoint-down(sm) {
     padding: pad(small) pad();

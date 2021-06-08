@@ -18,25 +18,30 @@
 
   &__header {
     display: flex;
+    width: 100%;
     height: $g-header-height;
     align-items: center;
     justify-content: space-between;
     padding: 0 pad(3xlarge) 0 pad(large);
 
     @include media-breakpoint-down(sm) {
-      height: $g-header-height / 1.75;
       padding: 0 pad(3xsmall) 0 pad(3xsmall);
     }
   }
 
   &__brand {
     width: px-to-rem(200px);
-    color: $color-white;
-    font-size: $g-font-size-xlarge;
+    flex-grow: 1;
+    text-align: center;
 
     @include media-breakpoint-down(sm) {
       max-width: 100%;
       padding-right: pad(small);
+    }
+
+    &--link {
+      color: $color-white;
+      font-size: $g-font-size-xlarge;
     }
   }
 }

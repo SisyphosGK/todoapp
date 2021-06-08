@@ -307,16 +307,19 @@ $g-utilities: (
   ),
   'text-align': (
     property: text-align,
-    values: left
-      (
-        value: right,
-        responsive: true,
-      )
-      (
-        value: center,
-        responsive: true,
-      )
-      justify,
+    values: (
+      value: left,
+      responsive: true,
+    )
+    (
+      value: right,
+      responsive: true,
+    )
+    (
+      value: center,
+      responsive: true,
+    )
+    justify,
   ),
   'text-transform': (
     property: text-transform,

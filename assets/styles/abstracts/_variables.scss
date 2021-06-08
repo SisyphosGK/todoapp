@@ -71,7 +71,7 @@ $g-hr-margin-ends: 1.5rem !default;
 // Box Shadow
 // -------------------------
 
-$g-box-shadow-primary: 0 0 px-to-rem(152px) px-to-rem(26px) rgba($color-perfume, 36%); // stylelint-disable-line meowtec/no-px
+$g-box-shadow-primary: 0 0 px-to-rem(48px) px-to-rem(5px) lighten($color-nero, 2%); // stylelint-disable-line meowtec/no-px
 
 //
 // Border Radius

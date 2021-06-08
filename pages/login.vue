@@ -4,6 +4,7 @@
       <div class="col-12 col--md-10 col--lg-8 col--xl-6 u-margin-sides-auto">
         <BaseCard>
           <h1 class="u-color-primary u-text-align-center u-margin-bottom-xlarge">TODOAPP</h1>
+
           <ValidationObserver ref="loginForm" tag="div">
             <div @submit.prevent>
               <!-- E-Posta -->
@@ -92,7 +93,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-@import '../assets/styles/abstracts/index';
-</style>

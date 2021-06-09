@@ -22,6 +22,7 @@
     "node": "10.20 || 12.22.0"
   },
   "dependencies": {
+    "@nuxtjs/apollo": "^4.0.1-rc.5",
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/svg-sprite": "^0.5.2",
     "bootstrap-vue": "^2.21.2",
@@ -29,6 +30,7 @@
     "bvtnet-items-provider": "1.0.4",
     "chart.js": "2",
     "core-js": "^3.6.5",
+    "graphql-tag": "^2.12.4",
     "nuxt": "^2.14.6",
     "nuxt-helper-json": "^1.0.0",
     "nuxt-i18n": "^6.27.0",

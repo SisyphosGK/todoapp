@@ -54,6 +54,8 @@
                 >
                   Giriş yap
                 </Button>
+
+                <p>Bir hesabın yok mu? <NuxtLink to="/register">Kayıt Ol</NuxtLink></p>
               </div>
             </div>
           </ValidationObserver>

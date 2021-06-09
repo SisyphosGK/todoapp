@@ -6,18 +6,33 @@
           Hoşgeldin <b class="u-color-primary">Nietzsche !</b>
         </h1>
       </div>
+    </div>
 
+    <div v-if="projects.length > 1" class="row">
       <div
         v-for="(project, i) in projects"
         :key="i"
         class="col col-12 col--2xl-4 u-padding-right@2xl-up u-margin-bottom"
       >
         <NuxtLink :to="project.link">
-          <BaseCard theme="primaryLight">
+          <BaseCard>
             <h2>{{ project.name }}</h2>
+            <p class="u-color-white">{{ project.deadline }}</p>
+            <p class="u-color-white">
+              <b>Toplam:</b>
+              <span class="u-color-primary">{{ project.status.todoCount }}</span> <br />
+              <b>Tamamlanan:</b>
+              <span class="u-color-success">{{ project.status.isDoneCount }}</span> <br />
+              <b>Devam eden:</b>
+              <span class="u-color-warning">{{ project.status.inProgressCount }}</span>
+            </p>
           </BaseCard>
         </NuxtLink>
       </div>
+    </div>
+    <div v-if="projects.length < 1" class="u-margin-top">
+      <svg-icon name="IconAlert" title="Uyarı" class="u-color-warning u-font-size-medium" />
+      Yapılacaklar listeniz boş
     </div>
   </div>
 </template>
@@ -34,77 +49,35 @@ export default {
         {
           link: ROUTE_NAMES.PROJECT1.PATH,
           name: ROUTE_NAMES.PROJECT1.NAME,
+          deadline: '11.06.2021',
 
-          todos: [
-            {
-              id: 0,
-              text: 'YK',
-              date: '04.06.2021',
-              isDone: false,
-            },
-            {
-              id: 1,
-              text: 'YK',
-              date: '04.06.2021',
-              isDone: false,
-            },
-            {
-              id: 2,
-              text: 'YK',
-              date: '04.06.2021',
-              isDone: false,
-            },
-          ],
+          status: {
+            todoCount: 15,
+            isDoneCount: 7,
+            inProgressCount: 8,
+          },
         },
         {
           link: ROUTE_NAMES.PROJECT2.PATH,
           name: ROUTE_NAMES.PROJECT2.NAME,
+          deadline: '18.07.2021',
 
-          todos: [
-            {
-              id: 0,
-              text: 'YO',
-              date: '04.06.2021',
-              isDone: false,
-            },
-            {
-              id: 1,
-              text: 'YO',
-              date: '04.06.2021',
-              isDone: false,
-            },
-            {
-              id: 2,
-              text: 'YO',
-              date: '04.06.2021',
-              isDone: false,
-            },
-          ],
+          status: {
+            todoCount: 15,
+            isDoneCount: 7,
+            inProgressCount: 8,
+          },
         },
         {
           link: ROUTE_NAMES.PROJECT3.PATH,
           name: ROUTE_NAMES.PROJECT3.NAME,
+          deadline: '15.06.2021',
 
-          todos: [
-            {
-              id: 0,
-              text: 'GK',
-              date: '04.06.2021',
-              isDone: false,
-            },
-            {
-              id: 1,
-              text: 'GK',
-              date: '04.06.2021',
-              isDone: false,
-            },
-            {
-              id: 2,
-              text: 'GK',
-              date: '04.06.2021',
-              isDone: false,
-            },
-          ],
+          status: {
+            todoCount: 15,
+            isDoneCount: 7,
+            inProgressCount: 8,
+          },
         },
       ],
     };

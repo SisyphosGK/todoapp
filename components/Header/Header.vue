@@ -1,12 +1,8 @@
 <template>
-  <div class="c-header">
-    <header class="c-header__header">
+  <header class="c-header">
+    <div class="c-header__header">
       <div>
-        <button
-          class="u-cursor-pointer u-font-size-large"
-          type="button"
-          @click="toggleNavbarVisibility"
-        >
+        <button class="c-header__button" type="button" @click="toggleNavbarVisibility">
           <svg-icon name="IconMenu" />
         </button>
       </div>
@@ -14,8 +10,14 @@
       <div class="c-header__brand">
         <NuxtLink :to="ROUTE_NAMES.HOME.PATH" class="c-header__brand--link">TodoAPP</NuxtLink>
       </div>
-    </header>
-  </div>
+
+      <button type="button" class="c-header__button" @click="logout">
+        <Tooltip content="Çıkış yap" theme="material" :hide-on-mobile="true">
+          <svg-icon name="IconExit" />
+        </Tooltip>
+      </button>
+    </div>
+  </header>
 </template>
 
 <script>
@@ -42,6 +44,11 @@ export default {
 
     toggleNavbarVisibility() {
       this.setNavbarVisibleStatus(!this.getNavbarVisibleStatus());
+    },
+
+    logout() {
+      this.$apolloHelpers.onLogout();
+      this.$router.push('/login');
     },
   },
 };

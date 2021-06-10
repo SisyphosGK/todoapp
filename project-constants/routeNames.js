@@ -6,7 +6,7 @@ export const ROUTE_NAMES = {
   //
 
   HOME: {
-    NAME: 'Ana Sayfa',
+    NAME: 'index',
     PATH: '/',
   },
 

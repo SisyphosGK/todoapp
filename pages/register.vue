@@ -3,10 +3,31 @@
     <div class="row">
       <div class="col-12 col--md-10 col--lg-8 col--xl-6 u-margin-sides-auto">
         <BaseCard>
-          <h1 class="u-color-primary u-text-align-center u-margin-bottom-xlarge">TODOAPP</h1>
+          <h1 class="u-color-primary u-text-align-center u-margin-bottom-xlarge">
+            TODOAPP - Kayıt Ol
+          </h1>
 
-          <ValidationObserver ref="loginForm" tag="div">
+          <ValidationObserver ref="registerForm" tag="div">
             <div @submit.prevent>
+              <!-- İsim Soyisim -->
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="Tam Ad"
+                rules="required"
+                class="u-margin-bottom"
+                tag="div"
+              >
+                <Input
+                  v-model="form.fullName"
+                  :is-invalid="errors.length > 0"
+                  tag="input"
+                  input-element="input"
+                  input-type="text"
+                  placeholder="Tam Ad"
+                />
+                <div class="u-color-danger">{{ errors[0] }}</div>
+              </ValidationProvider>
+
               <!-- E-Posta -->
               <ValidationProvider
                 v-slot="{ errors }"
@@ -45,17 +66,36 @@
                 <div class="u-color-danger">{{ errors[0] }}</div>
               </ValidationProvider>
 
+              <!-- Şifre Onay -->
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="Şifre Onay"
+                rules="required|confirmed:Şifre"
+                class="u-margin-bottom"
+                tag="div"
+              >
+                <Input
+                  v-model="form.passwordConfirm"
+                  :is-invalid="errors.length > 0"
+                  tag="input"
+                  input-element="input"
+                  input-type="password"
+                  placeholder="Şifre Onay"
+                />
+                <div class="u-color-danger">{{ errors[0] }}</div>
+              </ValidationProvider>
+
               <div class="u-text-align-center u-margin-top-2xlarge">
                 <Button
                   theme="ghost"
                   tag="button"
                   type="submit"
-                  @click.native="loginFormValidation"
+                  @click.native="registerFormValidation"
                 >
-                  Giriş yap
+                  Kayıt Ol
                 </Button>
 
-                <p>Bir hesabın yok mu? <NuxtLink to="/register">Kayıt Ol</NuxtLink></p>
+                <p>Zaten hesabın var mı? <NuxtLink to="/login">Giriş Yap</NuxtLink></p>
               </div>
             </div>
           </ValidationObserver>
@@ -72,8 +112,10 @@ export default {
   data() {
     return {
       form: {
+        fullName: null,
         email: null,
         password: null,
+        passwordConfirm: null,
       },
     };
   },
@@ -85,10 +127,10 @@ export default {
   },
 
   methods: {
-    loginFormValidation() {
-      this.$refs.loginForm.validate().then(success => {
+    registerFormValidation() {
+      this.$refs.registerForm.validate().then(success => {
         if (success) {
-          console.log('email', this.form.email);
+          console.log('Full Name', this.form.fullName);
         }
       });
     },

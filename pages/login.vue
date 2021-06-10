@@ -6,7 +6,7 @@
           <h1 class="u-color-primary u-text-align-center u-margin-bottom-xlarge">TODOAPP</h1>
 
           <ValidationObserver ref="loginForm" tag="div">
-            <div @submit.prevent>
+            <form @submit.prevent>
               <!-- E-Posta -->
               <ValidationProvider
                 v-slot="{ errors }"
@@ -20,7 +20,7 @@
                   :is-invalid="errors.length > 0"
                   tag="input"
                   input-element="input"
-                  input-type="text"
+                  input-type="email"
                   placeholder="E-Posta"
                 />
                 <div class="u-color-danger">{{ errors[0] }}</div>
@@ -57,7 +57,7 @@
 
                 <p>Bir hesabın yok mu? <NuxtLink to="/register">Kayıt Ol</NuxtLink></p>
               </div>
-            </div>
+            </form>
           </ValidationObserver>
         </BaseCard>
       </div>
@@ -66,6 +66,10 @@
 </template>
 
 <script>
+import { ROUTE_NAMES } from '~/project-constants/routeNames';
+import { LOGIN_MUTATION } from '~/graphql/mutations/index';
+import { MOBILE_THRESHOLD_VALUE } from '~/project-constants/breakpoints';
+
 export default {
   layout: 'full',
 
@@ -86,9 +90,45 @@ export default {
 
   methods: {
     loginFormValidation() {
-      this.$refs.loginForm.validate().then(success => {
+      let TOAST_OPTIONS;
+
+      if (document.body.clientWidth < MOBILE_THRESHOLD_VALUE) {
+        TOAST_OPTIONS = {
+          position: 'top',
+          duration: 2000,
+          dismissible: true,
+          queue: true,
+          pauseOnHover: false,
+        };
+      } else {
+        TOAST_OPTIONS = {
+          position: 'top-right',
+          duration: 3000,
+          dismissible: true,
+          queue: false,
+          pauseOnHover: true,
+        };
+      }
+
+      this.$refs.loginForm.validate().then(async success => {
         if (success) {
-          console.log('email', this.form.email);
+          try {
+            const response = await this.$apollo.mutate({
+              mutation: LOGIN_MUTATION,
+              variables: {
+                email: this.form.email,
+                password: this.form.password,
+              },
+            });
+            this.$apolloHelpers.onLogin(response.data.login.access_token);
+
+            this.$router.push({ name: ROUTE_NAMES.HOME.NAME });
+
+            this.$toast.success('Başarıyla giriş yaptınız', TOAST_OPTIONS);
+          } catch (error) {
+            if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+            this.$toast.error(error.graphQLErrors[0].message, TOAST_OPTIONS);
+          }
         }
       });
     },

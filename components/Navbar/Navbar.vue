@@ -121,16 +121,16 @@ export default {
 
       navLinkDatas: [
         {
-          path: ROUTE_NAMES.PROJECT1.PATH,
-          name: ROUTE_NAMES.PROJECT1.NAME,
+          path: ROUTE_NAMES.HOME.PATH,
+          name: ROUTE_NAMES.HOME.NAME,
         },
         {
-          path: ROUTE_NAMES.PROJECT2.PATH,
-          name: ROUTE_NAMES.PROJECT2.NAME,
+          path: ROUTE_NAMES.HOME.PATH,
+          name: ROUTE_NAMES.HOME.NAME,
         },
         {
-          path: ROUTE_NAMES.PROJECT3.PATH,
-          name: ROUTE_NAMES.PROJECT3.NAME,
+          path: ROUTE_NAMES.HOME.PATH,
+          name: ROUTE_NAMES.HOME.NAME,
         },
       ],
     };

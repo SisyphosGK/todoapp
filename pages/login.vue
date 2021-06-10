@@ -6,7 +6,7 @@
           <h1 class="u-color-primary u-text-align-center u-margin-bottom-xlarge">TODOAPP</h1>
 
           <ValidationObserver ref="loginForm" tag="div">
-            <form @submit.prevent="loginFormValidation">
+            <form @submit.prevent>
               <!-- E-Posta -->
               <ValidationProvider
                 v-slot="{ errors }"
@@ -126,7 +126,7 @@ export default {
 
             this.$toast.success('Başarıyla giriş yaptınız', TOAST_OPTIONS);
           } catch (error) {
-            console.log(error);
+            if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
             this.$toast.error(error.graphQLErrors[0].message, TOAST_OPTIONS);
           }
         }

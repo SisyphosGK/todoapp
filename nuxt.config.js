@@ -14,7 +14,13 @@ export default {
       { name: 'theme-color', content: '#1620d7' },
       { name: 'msapplication-TileColor', content: '#1620d7' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon/favicon.ico' }],
+    link: [
+      {
+        rel: 'icon',
+        type: 'image/x-icon',
+        href: `${process.env.NUXT_ENV_BASE_URL}/favicon/favicon.ico`,
+      },
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -31,8 +37,12 @@ export default {
     baseUrl: process.env.NUXT_ENV_BASE_URL,
   },
 
+  // Middleware
+  middleware: ['page-restrictions/page-restrictions'],
+
   router: {
     base: process.env.NUXT_ENV_BASE_URL,
+    middleware: 'page-restrictions/page-restrictions',
   },
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -63,6 +73,7 @@ export default {
         httpEndpoint: process.env.NUXT_ENV_APOLLO_ENDPOINT,
       },
     },
+    authenticationType: process.env.NUXT_ENV_APOLLO_AUTHENTICATION_TYPE,
   },
 
   svgSprite: {

@@ -54,7 +54,16 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     '@nuxtjs/svg-sprite',
+    '@nuxtjs/apollo',
   ],
+
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: process.env.NUXT_ENV_APOLLO_ENDPOINT,
+      },
+    },
+  },
 
   svgSprite: {
     input: '~/assets/svg/original',

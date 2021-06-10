@@ -8,29 +8,46 @@
       </div>
     </div>
 
-    <div v-if="projects.length > 1" class="row">
+    <div v-if="projects" class="row">
       <div
         v-for="(project, i) in projects"
         :key="i"
-        class="col col-12 col--2xl-4 u-padding-right@2xl-up u-margin-bottom"
+        class="col col-12 col--md-6 col--lg-4 u-padding-right@2xl-up u-margin-bottom u-display-flex"
       >
-        <NuxtLink :to="project.link">
-          <BaseCard>
+        <BaseCard>
+          <NuxtLink :to="`projects/${project.id}`">
             <h2>{{ project.name }}</h2>
-            <p class="u-color-white">{{ project.deadline }}</p>
-            <p class="u-color-white">
-              <b>Toplam:</b>
-              <span class="u-color-primary">{{ project.status.todoCount }}</span> <br />
-              <b>Tamamlanan:</b>
-              <span class="u-color-success">{{ project.status.isDoneCount }}</span> <br />
-              <b>Devam eden:</b>
-              <span class="u-color-warning">{{ project.status.inProgressCount }}</span>
+
+            <p class="u-color-white u-margin-bottom">
+              {{ getDateFromISOWithHourAndMinute(project.deadline_at) }}
             </p>
-          </BaseCard>
-        </NuxtLink>
+
+            <div>
+              <b class="u-color-white">Toplam:</b>
+              <span class="u-color-primary">{{ todoCount }}</span>
+            </div>
+
+            <div>
+              <b class="u-color-white">Tamamlanan:</b>
+              <span class="u-color-success">{{ isDoneCount }}</span>
+            </div>
+
+            <div>
+              <b class="u-color-white">Devam eden:</b>
+              <span class="u-color-warning">{{ inProgressCount }}</span>
+            </div>
+          </NuxtLink>
+        </BaseCard>
+      </div>
+
+      <div class="col">
+        <div class="u-text-align-center">
+          <NuxtLink :to="ROUTE_NAMES.PROJECTS.PATH">Hepsini Görüntüle</NuxtLink>
+        </div>
       </div>
     </div>
-    <div v-if="projects.length < 1" class="u-margin-top">
+
+    <div v-else class="u-margin-top">
       <svg-icon name="IconAlert" title="Uyarı" class="u-color-warning u-font-size-medium" />
       Yapılacaklar listeniz boş
     </div>
@@ -39,47 +56,46 @@
 
 <script>
 import { ROUTE_NAMES } from '~/project-constants/routeNames';
+import { GET_ALL_PROJECTS } from '~/graphql/queries/index';
+import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
+import STORE_PAGES_HOME from '~/store/pages/home/constants';
+import { mapGetters } from 'vuex';
+import { getDateFromISOWithHourAndMinute } from '~/utils/getDate';
 
 export default {
   layout: 'page',
 
+  async asyncData(context) {
+    try {
+      const response = await context.app.apolloProvider.defaultClient.query({
+        query: GET_ALL_PROJECTS,
+      });
+
+      await context.store.dispatch(
+        `${STORE_PAGES_HOME.BASE}/${STORE_PAGES_HOME.ACTIONS.SET_PROJECTS}`,
+        response.data.jobs,
+      );
+    } catch (error) {
+      if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+
+      if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHENTICATED) {
+        context.app.$apolloHelpers.onLogout();
+        context.redirect(302, ROUTE_NAMES.LOGIN.PATH);
+      }
+    }
+  },
+
   data() {
     return {
-      projects: [
-        {
-          link: ROUTE_NAMES.PROJECT1.PATH,
-          name: ROUTE_NAMES.PROJECT1.NAME,
-          deadline: '11.06.2021',
+      todoCount: 5,
+      isDoneCount: 10,
+      inProgressCount: 1,
 
-          status: {
-            todoCount: 15,
-            isDoneCount: 7,
-            inProgressCount: 8,
-          },
-        },
-        {
-          link: ROUTE_NAMES.PROJECT2.PATH,
-          name: ROUTE_NAMES.PROJECT2.NAME,
-          deadline: '18.07.2021',
+      projects: null,
 
-          status: {
-            todoCount: 15,
-            isDoneCount: 7,
-            inProgressCount: 8,
-          },
-        },
-        {
-          link: ROUTE_NAMES.PROJECT3.PATH,
-          name: ROUTE_NAMES.PROJECT3.NAME,
-          deadline: '15.06.2021',
+      MAXIMUM_VISIBLE_PROJECT_COUNT: 6,
 
-          status: {
-            todoCount: 15,
-            isDoneCount: 7,
-            inProgressCount: 8,
-          },
-        },
-      ],
+      ROUTE_NAMES,
     };
   },
 
@@ -87,9 +103,21 @@ export default {
     this.$nextTick(() => {
       this.$nuxt.$loading.finish();
     });
+
+    this.showProjects();
   },
 
   methods: {
+    getDateFromISOWithHourAndMinute,
+
+    ...mapGetters({
+      getProjects: `${STORE_PAGES_HOME.BASE}/${STORE_PAGES_HOME.GETTERS.GET_PROJECTS}`,
+    }),
+
+    showProjects() {
+      this.projects = this.getProjects().slice(0, this.MAXIMUM_VISIBLE_PROJECT_COUNT);
+    },
+
     onTaskStatusChange(id, status) {
       let item = this.todoList.find(i => i.id == id);
 
@@ -116,6 +144,7 @@ export default {
 
 .o-todo-list {
   @include list-unstyled();
-  color: white;
+
+  color: $color-white;
 }
 </style>

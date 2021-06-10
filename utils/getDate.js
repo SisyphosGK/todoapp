@@ -1,33 +1,38 @@
-function getDateFromISO(date) {
-  const utc = new Date(date).toUTCString();
-
-  return `${new Date(utc).getDate()}.${new Date(utc).getMonth() + 1}.${new Date(
-    utc,
-  ).getFullYear()}`;
+/* eslint-disable prettier/prettier */
+function makeDoubleInteger(date) {
+  return (`0${date}`).slice(-2)
 }
 
-function getYesterdayYearFirst(date) {
-  const utc = new Date(date).toUTCString();
+function getDateFromISO(UTCDate) {
+  const utc = (new Date(UTCDate)).toUTCString()
 
-  return `${new Date(utc).getFullYear()}-${`0${new Date(utc).getMonth() + 1}`.slice(-2)}-${
-    new Date(utc).getDate() - 1
-  }`;
+  return `${makeDoubleInteger(new Date(utc).getDate())}.${makeDoubleInteger(new Date(utc).getMonth() + 1)}.${new Date(utc).getFullYear()}.${makeDoubleInteger(new Date(utc).getHours())}`
 }
 
-function getTodayYearFirst(date) {
-  const utc = new Date(date).toUTCString();
+function getDateFromISOWithHourAndMinute(UTCDate) {
+  const utc = (new Date(UTCDate)).toUTCString()
 
-  return `${new Date(utc).getFullYear()}-${`0${new Date(utc).getMonth() + 1}`.slice(-2)}-${new Date(
-    utc,
-  ).getDate()}`;
+  return `${makeDoubleInteger(new Date(utc).getDate())}.${makeDoubleInteger(new Date(utc).getMonth() + 1)}.${new Date(utc).getFullYear()} - ${makeDoubleInteger(new Date(utc).getHours())}:${makeDoubleInteger(new Date(utc).getMinutes())}`
 }
 
-function getTomorrowYearFirst(date) {
-  const utc = new Date(date).toUTCString();
+function getYesterdayYearFirst(UTCDate) {
+  const utc = new Date((new Date(UTCDate)).valueOf() - 1000 * 60 * 60 * 24)
 
-  return `${new Date(utc).getFullYear()}-${`0${new Date(utc).getMonth() + 1}`.slice(-2)}-${
-    new Date(utc).getDate() + 1
-  }`;
+  return `${new Date(utc).getFullYear()}-${makeDoubleInteger(new Date(utc).getMonth() + 1)}-${makeDoubleInteger(new Date(utc).getDate())}`
 }
 
-export { getDateFromISO, getYesterdayYearFirst, getTodayYearFirst, getTomorrowYearFirst };
+function getTodayYearFirst(UTCDate) {
+  const utc = (new Date(UTCDate)).toUTCString()
+
+  return `${new Date(utc).getFullYear()}-${makeDoubleInteger(new Date(utc).getMonth() + 1)}-${makeDoubleInteger(new Date(utc).getDate())}`
+}
+
+function getTomorrowYearFirst(UTCDate) {
+  const utc = (new Date(UTCDate)).toUTCString()
+
+  return `${new Date(utc).getFullYear()}-${makeDoubleInteger(new Date(utc).getMonth() + 1)}-${makeDoubleInteger(new Date(utc).getDate() + 1)}`
+}
+
+export {
+  getDateFromISO, getDateFromISOWithHourAndMinute, getYesterdayYearFirst, getTodayYearFirst, getTomorrowYearFirst,
+}

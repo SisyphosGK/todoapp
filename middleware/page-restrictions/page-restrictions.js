@@ -8,7 +8,11 @@ export default async function (context) {
     return;
   }
 
-  if (!!context.$apolloHelpers.getToken() && routeName !== ROUTE_NAMES.LOGIN.NAME) {
+  if (!context.$apolloHelpers.getToken() && routeName !== ROUTE_NAMES.LOGIN.NAME) {
     context.redirect(302, ROUTE_NAMES.LOGIN.PATH);
+  }
+
+  if (!!context.$apolloHelpers.getToken() && routeName === ROUTE_NAMES.LOGIN.NAME) {
+    context.redirect(302, ROUTE_NAMES.HOME.PATH);
   }
 }

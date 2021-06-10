@@ -14,17 +14,9 @@ export const ROUTE_NAMES = {
   // PROJECTS
   //
 
-  PROJECT1: {
-    NAME: 'Todoapp',
-    PATH: '/projects/TodoApp',
-  },
-  PROJECT2: {
-    NAME: 'Proje',
-    PATH: '/projects/1',
-  },
-  PROJECT3: {
-    NAME: 'Proje 2',
-    PATH: '/projects/2',
+  PROJECTS: {
+    NAME: 'projects',
+    PATH: '/projects',
   },
 
   //

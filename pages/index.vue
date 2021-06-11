@@ -15,7 +15,7 @@
         class="col col-12 col--md-6 col--lg-4 u-padding-right@2xl-up u-margin-bottom u-display-flex"
       >
         <BaseCard>
-          <NuxtLink :to="`projects/${project.id}`">
+          <NuxtLink :to="`${ROUTE_NAMES.PROJECT.PATH}/${project.id}`">
             <h2>{{ project.name }}</h2>
 
             <p class="u-color-white u-margin-bottom">

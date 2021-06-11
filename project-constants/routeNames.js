@@ -19,6 +19,11 @@ export const ROUTE_NAMES = {
     PATH: '/projects',
   },
 
+  PROJECT: {
+    NAME: 'project',
+    PATH: '/project',
+  },
+
   //
   // AUTH
   //

@@ -28,9 +28,9 @@
     top: 50%;
     left: 50%;
     overflow: auto;
-    background-color: $color-white;
+    background-color: lighten($color-nero, 5%);
     border-radius: px-to-rem(4px);
-    box-shadow: 0 0 px-to-rem(152px) px-to-rem(26px) rgba(color-palette('gray', 500), 0.2);
+    // box-shadow: 0 0 px-to-rem(152px) px-to-rem(26px) rgba(color-palette('gray', 500), 0.2);
     cursor: default;
     transform: translate3d(-50%, -50%, 0);
 

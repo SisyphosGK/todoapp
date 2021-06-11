@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col col--xs-12 u-text-align-left">
         <h1 class="u-color-muted u-font-weight-600 u-margin-bottom-medium">
-          Hoşgeldin <b class="u-color-primary">Nietzsche !</b>
+          {{ projectName }}
         </h1>
       </div>
 
@@ -40,8 +40,8 @@
             v-for="item in todoList"
             :id="item.id"
             :key="item.id"
-            :task-name="item.text"
-            :is-done="item.isDone"
+            :task-name="item.name"
+            :is-done="item.status"
             @taskStatusChange="onTaskStatusChange"
             @taskDelete="onTaskDelete"
           />
@@ -57,11 +57,17 @@
 </template>
 
 <script>
+import { ROUTE_NAMES } from '~/project-constants/routeNames';
+import { GET_PROJECT_BY_ID } from '~/graphql/queries/index';
+import { ADD_NEW_TASK } from '~/graphql/mutations/index';
+import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
+
 export default {
   layout: 'page',
 
   data() {
     return {
+      projectName: '',
       selectedCategory: 'todoApp',
       selectedFilter: 'Tümü',
       todoInputModel: '',
@@ -73,31 +79,74 @@ export default {
     this.$nextTick(() => {
       this.$nuxt.$loading.finish();
     });
+
+    this.getProjectInfo();
   },
 
   methods: {
-    addNewTask(e) {
-      e.preventDefault();
+    async getProjectInfo() {
+      try {
+        const response = await this.$apollo.query({
+          query: GET_PROJECT_BY_ID,
+          variables: {
+            id: this.$route.params.id,
+          },
+        });
+        console.log(response);
 
+        this.projectName = response.data.job.name;
+        this.todoList = response.data.job.steps;
+      } catch (error) {
+        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHENTICATED) {
+          this.$apolloHelpers.onLogout();
+          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
+        }
+      }
+    },
+
+    async addNewTask() {
+      console.log(parseInt(this.$route.params.id, 10));
       if (this.todoInputModel == '') {
         return;
       }
 
-      let newTask = {
-        id: this.todoInputModel + this.todoList.length,
-        text: this.todoInputModel,
-        isDone: false,
-      };
+      try {
+        const response = await this.$apollo.mutate({
+          mutation: ADD_NEW_TASK,
+          variables: {
+            job_id: parseInt(this.$route.params.id, 10),
+            name: this.todoInputModel,
+            status: 0,
+          },
+        });
 
-      this.todoList.push(newTask);
-      this.todoInputModel = '';
+        let newTask = {
+          id: response.data.createStep.id,
+          name: this.todoInputModel,
+          isDone: 0,
+        };
+
+        this.todoList.push(newTask);
+        this.todoInputModel = '';
+
+        console.log(response.data.createStep.id);
+      } catch (error) {
+        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHENTICATED) {
+          this.$apolloHelpers.onLogout();
+          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
+        }
+      }
     },
 
     onTaskStatusChange(id, status) {
       let item = this.todoList.find(i => i.id == id);
 
       if (item) {
-        item.isDone = status;
+        item.status = status;
       }
     },
 

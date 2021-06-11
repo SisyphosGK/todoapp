@@ -1,5 +1,10 @@
 @import '../../assets/styles/abstracts/index';
 
+.mx-datepicker-popup {
+  border: 0;
+  background-color: $color-nero;
+}
+
 .c-date-picker {
   $animation-duration: 1.5s;
 
@@ -12,13 +17,17 @@
 
     .mx-input {
       height: px-to-rem(41px);
-      border: 0;
-      border-bottom: 1px solid $g-border-color;
-      border-radius: 0;
+      // stylelint-disable-next-line meowtec/no-px
+      border: 2px solid $g-border-color;
+      background-color: transparent;
+      border-radius: px-to-rem(8px);
       box-shadow: unset;
       color: $g-text-color;
       font-size: px-to-em(14px);
       font-weight: 600;
+    }
+    .mx-icon-calendar {
+      color: $color-light-gray;
     }
   }
 

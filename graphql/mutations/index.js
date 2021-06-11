@@ -9,3 +9,21 @@ export const LOGIN_MUTATION = gql`
     }
   }
 `;
+
+export const SET_TASK_STATUS = gql`
+  mutation loginMutation($email: String!, $password: String!) {
+    login(input: { email: $email, password: $password }) {
+      access_token
+      token_type
+      expires_in
+    }
+  }
+`;
+
+export const ADD_NEW_TASK = gql`
+  mutation addNewTask($job_id: Int!, $name: String!, $status: Int!) {
+    createStep(input: { job_id: $job_id, name: $name, status: $status }) {
+      id
+    }
+  }
+`;

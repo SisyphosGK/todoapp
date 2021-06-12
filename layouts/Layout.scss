@@ -5,10 +5,6 @@
     overflow: hidden;
   }
 
-  &__navbar {
-    flex-shrink: 0;
-  }
-
   &__wrapper {
     display: flex;
     height: calc(100vh - #{$g-header-height});

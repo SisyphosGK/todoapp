@@ -21,9 +21,11 @@ export const SET_TASK_STATUS = gql`
 `;
 
 export const ADD_NEW_TASK = gql`
-  mutation addNewTask($job_id: Int!, $name: String!, $status: Int!) {
-    createStep(input: { job_id: $job_id, name: $name, status: $status }) {
+  mutation addNewTask($jobs_id: Int!, $name: String!, $status: Int!) {
+    createStep(jobs_id: $jobs_id, name: $name, status: $status) {
       id
+      name
+      status
     }
   }
 `;

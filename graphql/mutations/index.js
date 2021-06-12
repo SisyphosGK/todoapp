@@ -29,3 +29,13 @@ export const ADD_NEW_TASK = gql`
     }
   }
 `;
+
+export const CREATE_PROJECT = gql`
+  mutation addNewTask($name: Int!, $deadline_at: String!, $users: Int!) {
+    createJob(name: $name, deadline_at: $deadline_at, users: $users) {
+      id
+      name
+      deadline_at
+    }
+  }
+`;

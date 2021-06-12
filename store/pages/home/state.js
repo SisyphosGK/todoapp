@@ -1,3 +1,3 @@
 export default () => ({
-  projects: true,
+  projects: null,
 });

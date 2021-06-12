@@ -69,6 +69,10 @@ export default {
     try {
       const response = await context.app.apolloProvider.defaultClient.query({
         query: GET_ALL_PROJECTS,
+        variables: {
+          limit: 12,
+          page: 1,
+        },
       });
 
       await context.store.dispatch(
@@ -78,7 +82,7 @@ export default {
     } catch (error) {
       if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
 
-      if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHENTICATED) {
+      if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
         context.app.$apolloHelpers.onLogout();
         context.redirect(302, ROUTE_NAMES.LOGIN.PATH);
       }
@@ -92,8 +96,6 @@ export default {
       inProgressCount: 1,
 
       projects: null,
-
-      MAXIMUM_VISIBLE_PROJECT_COUNT: 6,
 
       ROUTE_NAMES,
     };
@@ -115,7 +117,8 @@ export default {
     }),
 
     showProjects() {
-      this.projects = this.getProjects().slice(0, this.MAXIMUM_VISIBLE_PROJECT_COUNT);
+      this.projects = this.getProjects().data;
+      console.log(this.projects);
     },
 
     onTaskStatusChange(id, status) {

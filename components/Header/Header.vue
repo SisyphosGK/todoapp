@@ -28,12 +28,13 @@
       <h4 class="h2 u-margin-bottom-small">
         Yeni Proje Oluştur <svg-icon name="IconPlus" title="Yeni proje oluştur" />
       </h4>
+
       <ValidationObserver ref="addProjectForm" tag="div">
         <form @submit.prevent>
           <ValidationProvider
             v-slot="{ errors }"
             name="Proje İsmi"
-            rules="required|email"
+            rules="required"
             tag="div"
             class="u-margin-bottom-large"
           >
@@ -102,7 +103,7 @@ export default {
   },
 
   methods: {
-    validateaddProjectForm() {
+    validateAddProjectForm() {
       this.$refs.addProjectForm.validate().then(success => {
         if (success) {
           console.log(this.$refs.addProjectForm);

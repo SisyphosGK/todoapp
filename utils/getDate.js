@@ -6,7 +6,13 @@ function makeDoubleInteger(date) {
 function getDateFromISO(UTCDate) {
   const utc = (new Date(UTCDate)).toUTCString()
 
-  return `${makeDoubleInteger(new Date(utc).getDate())}.${makeDoubleInteger(new Date(utc).getMonth() + 1)}.${new Date(utc).getFullYear()}.${makeDoubleInteger(new Date(utc).getHours())}`
+  return `${makeDoubleInteger(new Date(utc).getDate())}.${makeDoubleInteger(new Date(utc).getMonth() + 1)}.${new Date(utc).getFullYear()}`
+}
+
+function getDateFromISOYearFirst(UTCDate) {
+  const utc = (new Date(UTCDate)).toUTCString()
+
+  return `${new Date(utc).getFullYear()}-${makeDoubleInteger(new Date(utc).getMonth() + 1)}-${makeDoubleInteger(new Date(utc).getDate())}`
 }
 
 function getDateFromISOWithHourAndMinute(UTCDate) {
@@ -34,5 +40,5 @@ function getTomorrowYearFirst(UTCDate) {
 }
 
 export {
-  getDateFromISO, getDateFromISOWithHourAndMinute, getYesterdayYearFirst, getTodayYearFirst, getTomorrowYearFirst,
+  getDateFromISO, getDateFromISOYearFirst, getDateFromISOWithHourAndMinute, getYesterdayYearFirst, getTodayYearFirst, getTomorrowYearFirst,
 }

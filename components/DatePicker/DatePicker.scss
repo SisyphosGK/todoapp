@@ -1,7 +1,31 @@
 @import '../../assets/styles/abstracts/index';
+$namespace: 'mx'; // change the 'mx' to 'xmx'. then <date-picker prefix-class="xmx" />
 
+$default-color: darken($color-white, 10%);
+$primary-color: $color-primary;
+
+$today-color: mix($color-nero, $primary-color, 10%);
+$not-current-month-color: lighten($color-nero, 45%);
+
+$input-border-color: $g-border-color;
+$border-color: $color-nero;
+
+$calendar-active-color: $color-white;
+$calendar-active-background-color: darken($primary-color, 5%);
+
+$calendar-hover-color: $default-color;
+$calendar-hover-background-color: $primary-color;
+
+$input-border-radius: px-to-rem(8px);
+$sidebar-margin-left: px-to-rem(100px);
+
+@import '~/node_modules/vue2-datepicker/scss/index';
+
+.mx-table-date .cell.not-current-month {
+  color: $not-current-month-color;
+}
 .mx-datepicker-popup {
-  border: 0;
+  // border: 0;
   background-color: $color-nero;
 }
 
@@ -20,7 +44,6 @@
       // stylelint-disable-next-line meowtec/no-px
       border: 2px solid $g-border-color;
       background-color: transparent;
-      border-radius: px-to-rem(8px);
       box-shadow: unset;
       color: $g-text-color;
       font-size: px-to-em(14px);

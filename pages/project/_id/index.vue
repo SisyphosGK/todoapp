@@ -89,7 +89,7 @@ export default {
         const response = await this.$apollo.query({
           query: GET_PROJECT_BY_ID,
           variables: {
-            id: this.$route.params.id,
+            id: parseInt(this.$route.params.id),
           },
         });
         console.log(response);
@@ -99,7 +99,7 @@ export default {
       } catch (error) {
         if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
 
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHENTICATED) {
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
           this.$apolloHelpers.onLogout();
           this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
         }
@@ -116,7 +116,7 @@ export default {
         const response = await this.$apollo.mutate({
           mutation: ADD_NEW_TASK,
           variables: {
-            job_id: parseInt(this.$route.params.id, 10),
+            jobs_id: parseInt(this.$route.params.id, 10),
             name: this.todoInputModel,
             status: 0,
           },
@@ -124,8 +124,8 @@ export default {
 
         let newTask = {
           id: response.data.createStep.id,
-          name: this.todoInputModel,
-          isDone: 0,
+          name: response.data.createStep.name,
+          isDone: response.data.createStep.status,
         };
 
         this.todoList.push(newTask);
@@ -135,7 +135,7 @@ export default {
       } catch (error) {
         if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
 
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHENTICATED) {
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
           this.$apolloHelpers.onLogout();
           this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
         }

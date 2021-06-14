@@ -1,11 +1,17 @@
 <template>
   <header class="c-header">
     <div class="c-header__header">
-      <div>
-        <button class="c-header__button" type="button" @click="toggleNavbarVisibility">
-          <svg-icon name="IconMenu" />
-        </button>
-      </div>
+      <button
+        theme="tertiary"
+        tag="button"
+        type="button"
+        class="c-header__button"
+        @click="addProjectModal = true"
+      >
+        <Tooltip content="Yeni proje oluştur" theme="material" :hide-on-mobile="true">
+          <svg-icon name="IconPlus" title="Yeni proje oluştur" />
+        </Tooltip>
+      </button>
 
       <div class="c-header__brand">
         <NuxtLink :to="ROUTE_NAMES.HOME.PATH" class="c-header__brand--link">TodoAPP</NuxtLink>
@@ -17,33 +23,117 @@
         </Tooltip>
       </button>
     </div>
+
+    <modal :modal-state="addProjectModal" @closeModal="addProjectModal = false">
+      <h4 class="h2 u-margin-bottom-small">
+        Yeni Proje Oluştur <svg-icon name="IconPlus" title="Yeni proje oluştur" />
+      </h4>
+
+      <ValidationObserver ref="addProjectForm" tag="div">
+        <form @submit.prevent>
+          <ValidationProvider
+            v-slot="{ errors }"
+            name="Proje İsmi"
+            rules="required"
+            tag="div"
+            class="u-margin-bottom-large"
+          >
+            <Input
+              v-model="newProjectData.projectName"
+              tag="input"
+              input-type="text"
+              input-element="input"
+              name="projectName"
+              placeholder="Proje İsmi"
+              :is-invalid="errors.length > 0"
+              :has-label-text="false"
+            />
+
+            <div class="u-color-danger">{{ errors[0] }}</div>
+          </ValidationProvider>
+
+          <ValidationProvider
+            v-slot="{ errors }"
+            name="Proje Bitiş Tarihi"
+            rules="required"
+            tag="div"
+            class="u-margin-bottom-large"
+          >
+            <DatePicker
+              v-model="newProjectData.deadline"
+              :is-invalid="errors.length > 0"
+              :has-label-text="false"
+              name="projectDeadline"
+              placeholder="Proje Bitiş Tarihi"
+            />
+
+            <div class="u-color-danger">{{ errors[0] }}</div>
+          </ValidationProvider>
+
+          <div class="u-text-align-center">
+            <Button
+              theme="primary"
+              tag="button"
+              type="submit"
+              @click.native="validateAddProjectForm"
+            >
+              Oluştur
+            </Button>
+          </div>
+        </form>
+      </ValidationObserver>
+    </modal>
   </header>
 </template>
 
 <script>
 import { ROUTE_NAMES } from '~/project-constants/routeNames';
-import { mapGetters, mapActions } from 'vuex';
-import STORE_GENERAL from '~/store/general/constants';
 import { MOBILE_THRESHOLD_VALUE } from '~/project-constants/breakpoints';
+import { CREATE_PROJECT } from '~/graphql/mutations';
+import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
 
 export default {
   data() {
     return {
       ROUTE_NAMES,
+      addProjectModal: false,
+      newProjectData: {
+        projectName: null,
+        deadline: null,
+        users: [],
+      },
     };
   },
 
   methods: {
-    ...mapGetters({
-      getNavbarVisibleStatus: `${STORE_GENERAL.BASE}/${STORE_GENERAL.GETTERS.GET_NAVBAR_VISIBLE_STATUS}`,
-    }),
+    async validateAddProjectForm() {
+      this.$refs.addProjectForm.validate().then(success => {
+        if (success) {
+          console.log('Validate Project Form:' + this.$refs.addProjectForm);
+          this.createNewProject();
+        }
+      });
+    },
 
-    ...mapActions({
-      setNavbarVisibleStatus: `${STORE_GENERAL.BASE}/${STORE_GENERAL.ACTIONS.SET_NAVBAR_VISIBLE_STATUS}`,
-    }),
+    async createNewProject() {
+      try {
+        await this.$apollo.mutate({
+          mutation: CREATE_PROJECT,
+          variables: {
+            name: this.newProjectData.projectName,
+            deadline_at: this.newProjectData.deadline,
+            users: this.newProjectData.users,
+          },
+        });
+        this.$toast.success('Proje başarıyla eklendi');
+      } catch (error) {
+        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
 
-    toggleNavbarVisibility() {
-      this.setNavbarVisibleStatus(!this.getNavbarVisibleStatus());
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
+          this.$apolloHelpers.onLogout();
+          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
+        }
+      }
     },
 
     logout() {

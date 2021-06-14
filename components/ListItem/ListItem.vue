@@ -26,8 +26,8 @@
 export default {
   props: {
     id: {
-      type: String,
-      default: '0',
+      type: Number,
+      default: 0,
     },
     taskName: {
       type: String,
@@ -38,8 +38,8 @@ export default {
       default: '04.06.2021',
     },
     isDone: {
-      type: String,
-      default: '',
+      type: Number,
+      default: 0,
     },
   },
 
@@ -65,7 +65,7 @@ export default {
       } catch (error) {
         if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
 
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHENTICATED) {
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
           this.$apolloHelpers.onLogout();
           this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
         }

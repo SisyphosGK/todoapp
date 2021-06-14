@@ -89,6 +89,8 @@
 <script>
 import { ROUTE_NAMES } from '~/project-constants/routeNames';
 import { MOBILE_THRESHOLD_VALUE } from '~/project-constants/breakpoints';
+import { CREATE_PROJECT } from '~/graphql/mutations';
+import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
 
 export default {
   data() {
@@ -98,17 +100,40 @@ export default {
       newProjectData: {
         projectName: null,
         deadline: null,
+        users: [],
       },
     };
   },
 
   methods: {
-    validateAddProjectForm() {
+    async validateAddProjectForm() {
       this.$refs.addProjectForm.validate().then(success => {
         if (success) {
-          console.log(this.$refs.addProjectForm);
+          console.log('Validate Project Form:' + this.$refs.addProjectForm);
+          this.createNewProject();
         }
       });
+    },
+
+    async createNewProject() {
+      try {
+        await this.$apollo.mutate({
+          mutation: CREATE_PROJECT,
+          variables: {
+            name: this.newProjectData.projectName,
+            deadline_at: this.newProjectData.deadline,
+            users: this.newProjectData.users,
+          },
+        });
+        this.$toast.success('Proje başarıyla eklendi');
+      } catch (error) {
+        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
+          this.$apolloHelpers.onLogout();
+          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
+        }
+      }
     },
 
     logout() {

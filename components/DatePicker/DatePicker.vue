@@ -1,35 +1,33 @@
 <template>
-  <div>
-    <label
-      :class="[
-        'c-date-picker',
-        isValid ? 'is-valid' : null,
-        isInvalid ? 'is-invalid' : null,
-        isWarning ? 'is-warning' : null,
-      ]"
-    >
-      <div v-if="hasLabelText" class="c-date-picker__text">{{ labelText }}</div>
+  <label
+    :class="[
+      'c-date-picker',
+      isValid ? 'is-valid' : null,
+      isInvalid ? 'is-invalid' : null,
+      isWarning ? 'is-warning' : null,
+    ]"
+  >
+    <div v-if="hasLabelText" class="c-date-picker__text">{{ labelText }}</div>
 
-      <DatePicker
-        ref="datePicker"
-        v-model="datePickerModel"
-        class="c-date-picker__wrapper"
-        :lang="lang"
-        :range="range"
-        :name="name"
-        :disabled="isDisabled"
-        @change="handleChange()"
-      />
-    </label>
-  </div>
+    <DatePicker
+      ref="datePicker"
+      v-model="datePickerModel"
+      class="c-date-picker__wrapper"
+      :lang="lang"
+      :range="range"
+      format="DD-MM-YYYY"
+      :name="name"
+      :disabled="isDisabled"
+      range-separator="/"
+      @change="handleChange()"
+    />
+  </label>
 </template>
 
 <script>
 import DatePicker from 'vue2-datepicker';
-import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/tr';
-
-import { getDateFromISO } from '~/utils/getDate';
+import { getDateFromISO, getDateFromISOYearFirst } from '~/utils/getDate';
 
 export default {
   components: { DatePicker },
@@ -89,7 +87,7 @@ export default {
   methods: {
     handleChange() {
       this.datePickerValue = getDateFromISO(this.datePickerModel);
-      this.$emit('input', this.datePickerModel);
+      this.$emit('input', getDateFromISOYearFirst(this.datePickerModel));
     },
   },
 };

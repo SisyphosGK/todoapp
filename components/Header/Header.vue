@@ -17,6 +17,11 @@
         <NuxtLink :to="ROUTE_NAMES.HOME.PATH" class="c-header__brand--link">TodoAPP</NuxtLink>
       </div>
 
+      <NuxtLink :to="ROUTE_NAMES.PROFILE.PATH" class="c-header__button">
+        <Tooltip content="Profil" theme="material" :hide-on-mobile="true">
+          <svg-icon name="IconUserCircle" />
+        </Tooltip>
+      </NuxtLink>
       <button type="button" class="c-header__button" @click="logout">
         <Tooltip content="Çıkış yap" theme="material" :hide-on-mobile="true">
           <svg-icon name="IconExit" />

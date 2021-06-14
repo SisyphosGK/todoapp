@@ -39,3 +39,18 @@ export const CREATE_PROJECT = gql`
     }
   }
 `;
+
+export const UPDATE_PROFILE = gql`
+  mutation updateProfileMutation(
+    $name: String!
+    $email: String!
+    $password: String
+    $profilePicture: Upload
+  ) {
+    profile(name: $name, email: $email, password: $password, profilePicture: $profilePicture) {
+      id
+      name
+      profile_img
+    }
+  }
+`;

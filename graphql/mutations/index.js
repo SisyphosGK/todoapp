@@ -20,12 +20,18 @@ export const REGISTER_MUTATION = gql`
 `;
 
 export const SET_TASK_STATUS = gql`
-  mutation loginMutation($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
-      access_token
-      token_type
-      expires_in
+  mutation setTaskStatus($step_id: Int!, $name: String!, $status: Int!) {
+    updateStep(step_id: $step_id, name: $name, status: $status) {
+      id
+      name
+      status
     }
+  }
+`;
+
+export const DELETE_TASK = gql`
+  mutation deleteTaskMutation($step_id: Int!) {
+    deleteStep(step_id: $step_id)
   }
 `;
 

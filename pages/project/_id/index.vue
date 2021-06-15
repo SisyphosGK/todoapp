@@ -42,8 +42,7 @@
             :key="item.id"
             :task-name="item.name"
             :is-done="item.status"
-            @taskStatusChange="onTaskStatusChange"
-            @taskDelete="onTaskDelete"
+            @taskDeleted="onTaskDeleted"
           />
         </ul>
 
@@ -142,22 +141,12 @@ export default {
       }
     },
 
-    onTaskStatusChange(id, status) {
-      let item = this.todoList.find(i => i.id == id);
-
-      if (item) {
-        item.status = status;
-      }
-    },
-
-    onTaskDelete(id) {
+    onTaskDeleted(id) {
       let index = this.todoList.findIndex(i => i.id == id);
 
       if (index > -1) {
         this.todoList.splice(index, 1);
       }
-
-      console.log(this.todoList);
     },
   },
 };

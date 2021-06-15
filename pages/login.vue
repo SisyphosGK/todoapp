@@ -55,7 +55,9 @@
                   Giriş yap
                 </Button>
 
-                <p>Bir hesabın yok mu? <NuxtLink to="/register">Kayıt Ol</NuxtLink></p>
+                <p>
+                  Bir hesabın yok mu? <NuxtLink :to="ROUTE_NAMES.REGISTER.PATH">Kayıt Ol</NuxtLink>
+                </p>
               </div>
             </form>
           </ValidationObserver>
@@ -75,6 +77,8 @@ export default {
 
   data() {
     return {
+      ROUTE_NAMES,
+
       form: {
         email: null,
         password: null,

@@ -10,6 +10,11 @@ export const ROUTE_NAMES = {
     PATH: '/',
   },
 
+  PROFILE: {
+    NAME: 'profile',
+    PATH: '/profile',
+  },
+
   //
   // PROJECTS
   //

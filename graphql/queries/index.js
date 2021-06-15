@@ -30,3 +30,15 @@ export const GET_PROJECT_BY_ID = gql`
     }
   }
 `;
+
+export const GET_USER_DATA = gql`
+  query getUserData {
+    me {
+      id
+      name
+      email
+      profilePicture
+      created_at
+    }
+  }
+`;

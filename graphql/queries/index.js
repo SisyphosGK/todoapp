@@ -11,6 +11,7 @@ export const GET_ALL_PROJECTS = gql`
         id
         name
         deadline_at
+        steps_count
       }
     }
   }

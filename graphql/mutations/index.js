@@ -10,6 +10,15 @@ export const LOGIN_MUTATION = gql`
   }
 `;
 
+export const REGISTER_MUTATION = gql`
+  mutation registerMutation($name: String!, $email: String!, $password: String!) {
+    register(name: $name, email: $email, password: $password) {
+      user_id
+      access_token
+    }
+  }
+`;
+
 export const SET_TASK_STATUS = gql`
   mutation loginMutation($email: String!, $password: String!) {
     login(input: { email: $email, password: $password }) {

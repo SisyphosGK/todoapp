@@ -21,7 +21,7 @@
 
 <script>
 import { ROUTE_NAMES } from '~/project-constants/routeNames';
-import { SET_TASK_STATUS } from '~/graphql/mutations/index';
+import { DELETE_TASK, SET_TASK_STATUS } from '~/graphql/mutations/index';
 import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
 export default {
   props: {
@@ -82,8 +82,24 @@ export default {
       }
     },
 
-    deleteTask() {
-      console.log('Delete');
+    async deleteTask() {
+      try {
+        await this.$apollo.mutate({
+          mutation: DELETE_TASK,
+          variables: {
+            step_id: this.id,
+          },
+        });
+
+        this.$emit('taskDeleted', this.id);
+      } catch (error) {
+        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
+          this.$apolloHelpers.onLogout();
+          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
+        }
+      }
     },
   },
 };

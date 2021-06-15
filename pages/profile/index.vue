@@ -1,98 +1,128 @@
 <template>
   <div class="container u-margin-top-large">
     <div class="row">
-      <div class="col col--xs-12 u-text-align-left">
-        <h1 class="u-color-muted u-font-weight-600 u-margin-bottom-medium">
-          Hoşgeldin <b class="u-color-primary">Nietzsche !</b>
-        </h1>
-      </div>
-      <div class="col col--xs-12">
-        <ValidationObserver ref="profileEditForm" tag="div">
-          <form @submit.prevent>
-            <!-- İsim Soyisim -->
-            <ValidationProvider
-              v-slot="{ errors }"
-              name="İsim Soyisim"
-              rules="required"
-              class="u-margin-bottom"
-              tag="div"
+      <transition name="first-area">
+        <div class="col col--xs-4 u-margin-sides-auto">
+          <BaseCard class="o-user-card">
+            <Button
+              theme="primary"
+              :is-small="true"
+              :is-circle="true"
+              class="o-user-card__edit"
+              type="button"
+              tag="button"
+              @click.native="editFormVisible = true"
             >
-              <Input
-                v-model="form.fullname"
-                :is-invalid="errors.length > 0"
-                tag="input"
-                input-element="input"
-                input-type="text"
-                placeholder="İsim Soyisim"
-              />
-              <div class="u-color-danger">{{ errors[0] }}</div>
-            </ValidationProvider>
-            <!-- E-Posta -->
-            <ValidationProvider
-              v-slot="{ errors }"
-              name="E-Posta"
-              rules="required|email"
-              class="u-margin-bottom"
-              tag="div"
-            >
-              <Input
-                v-model="form.email"
-                :is-invalid="errors.length > 0"
-                tag="input"
-                input-element="input"
-                input-type="email"
-                placeholder="E-Posta"
-              />
-              <div class="u-color-danger">{{ errors[0] }}</div>
-            </ValidationProvider>
+              <svg-icon name="IconEdit" title="Profil Düzenle" />
+            </Button>
+            <img
+              :src="userData.profilePictureSrc"
+              :alt="userData.fullname"
+              class="o-user-card__profile-picture"
+            />
+            <h2>{{ userData.fullname }}</h2>
+            <a :href="`mailto:` + userData.email">{{ userData.email }}</a>
+          </BaseCard>
+        </div>
+      </transition>
 
-            <!-- Şifre -->
-            <ValidationProvider
-              v-slot="{ errors }"
-              name="Şifre"
-              rules="required"
-              class="u-margin-bottom"
-              tag="div"
-            >
-              <Input
-                v-model="form.password"
-                :is-invalid="errors.length > 0"
-                tag="input"
-                input-element="input"
-                input-type="password"
-                placeholder="Şifre"
-              />
-              <div class="u-color-danger">{{ errors[0] }}</div>
-            </ValidationProvider>
-
-            <ValidationProvider
-              v-slot="{ errors }"
-              name="Profil Resmi"
-              rules="required"
-              tag="div"
-              class="u-margin-bottom-large"
-            >
-              <FileUpload
-                v-model="form.profilePicture"
-                @fileUploaded="file => (form.profilePicture = file)"
-              />
-
-              <div class="u-color-danger">{{ errors[0] }}</div>
-            </ValidationProvider>
-
-            <div class="u-text-align-center u-margin-top-2xlarge">
-              <Button
-                theme="ghost"
-                tag="button"
-                type="submit"
-                @click.native="profileEditFormValidation"
+      <transition name="fade">
+        <div v-if="editFormVisible" class="col col--xs-12">
+          <ValidationObserver ref="profileEditForm" tag="div">
+            <form @submit.prevent>
+              <!-- İsim Soyisim -->
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="İsim Soyisim"
+                rules="required"
+                class="u-margin-bottom"
+                tag="div"
               >
-                Güncelle
-              </Button>
-            </div>
-          </form>
-        </ValidationObserver>
-      </div>
+                <Input
+                  v-model="userData.fullname"
+                  :is-invalid="errors.length > 0"
+                  tag="input"
+                  input-element="input"
+                  input-type="text"
+                  placeholder="İsim Soyisim"
+                />
+                <div class="u-color-danger">{{ errors[0] }}</div>
+              </ValidationProvider>
+              <!-- E-Posta -->
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="E-Posta"
+                rules="required|email"
+                class="u-margin-bottom"
+                tag="div"
+              >
+                <Input
+                  v-model="userData.email"
+                  :is-invalid="errors.length > 0"
+                  tag="input"
+                  input-element="input"
+                  input-type="email"
+                  placeholder="E-Posta"
+                />
+                <div class="u-color-danger">{{ errors[0] }}</div>
+              </ValidationProvider>
+
+              <!-- Şifre -->
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="Şifre"
+                rules="required"
+                class="u-margin-bottom"
+                tag="div"
+              >
+                <Input
+                  v-model="userData.password"
+                  :is-invalid="errors.length > 0"
+                  tag="input"
+                  input-element="input"
+                  input-type="password"
+                  placeholder="Şifre"
+                />
+                <div class="u-color-danger">{{ errors[0] }}</div>
+              </ValidationProvider>
+
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="Profil Resmi"
+                rules="required"
+                tag="div"
+                class="u-margin-bottom-large"
+              >
+                <FileUpload
+                  v-model="userData.profilePicture"
+                  @fileUploaded="file => (form.profilePicture = file)"
+                />
+
+                <div class="u-color-danger">{{ errors[0] }}</div>
+              </ValidationProvider>
+
+              <div class="u-text-align-center u-margin-top-2xlarge">
+                <Button
+                  theme="ghost"
+                  tag="button"
+                  type="submit"
+                  @click.native="editFormVisible = false"
+                >
+                  Geri Dön
+                </Button>
+                <Button
+                  theme="tertiary"
+                  tag="button"
+                  type="submit"
+                  @click.native="profileEditFormValidation"
+                >
+                  Güncelle
+                </Button>
+              </div>
+            </form>
+          </ValidationObserver>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -108,11 +138,14 @@ export default {
 
   data() {
     return {
-      form: {
+      editFormVisible: false,
+
+      userData: {
         fullname: null,
         email: null,
         password: null,
         profilePicture: null,
+        profilePictureSrc: null,
       },
     };
   },
@@ -130,9 +163,10 @@ export default {
           query: GET_USER_DATA,
         });
 
-        this.form.fullname = response.data.me.name;
-        this.form.email = response.data.me.email;
-        this.form.profilePicture = response.data.me.profilePicture;
+        this.userData.fullname = response.data.me.name;
+        this.userData.email = response.data.me.email;
+        this.userData.profilePictureSrc = response.data.me.profilePicture;
+        console.log(response.data.me);
 
         this.$nuxt.$loading.finish();
       } catch (error) {
@@ -152,10 +186,10 @@ export default {
             await this.$apollo.mutate({
               mutation: UPDATE_PROFILE,
               variables: {
-                name: this.form.fullname,
-                email: this.form.email,
-                password: this.form.password,
-                profilePicture: this.form.profilePicture,
+                name: this.userData.fullname,
+                email: this.userData.email,
+                password: this.userData.password,
+                profilePicture: this.userData.profilePicture,
               },
             });
 
@@ -178,4 +212,21 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/styles/abstracts/index';
+
+.o-user-card {
+  text-align: center;
+
+  &__profile-picture {
+    max-width: px-to-rem(128px);
+    margin-bottom: gap();
+    border-radius: 50%;
+  }
+  &__edit {
+    position: absolute;
+    //stylelint-disable
+    top: 30px;
+    right: 30px;
+    //stylint-enable
+  }
+}
 </style>

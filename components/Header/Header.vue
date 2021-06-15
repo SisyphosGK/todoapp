@@ -82,10 +82,11 @@
             class="u-margin-bottom-large"
           >
             <v-select
-              v-model="newProjectData.users"
+              v-model="usersSelectModel"
               :class="errors.length > 0 ? 'is-invalid' : null"
               :options="userSelectOptions"
               placeholder="Kullanıcı Seçin"
+              multiple
             >
               <div slot="no-options" class="u-color-primary">Seçenek Bulunamadı</div>
             </v-select>
@@ -123,6 +124,7 @@ export default {
       addProjectModal: false,
 
       allUsers: [],
+      usersSelectModel: [],
       userSelectOptions: [],
 
       newProjectData: {
@@ -147,6 +149,12 @@ export default {
     },
 
     async createNewProject() {
+      if (this.usersSelectModel != null) {
+        this.usersSelectModel.forEach(selectedUser => {
+          this.newProjectData.users.push(selectedUser.value);
+        });
+      }
+
       try {
         await this.$apollo.mutate({
           mutation: CREATE_PROJECT,

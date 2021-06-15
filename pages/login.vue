@@ -69,6 +69,7 @@
 import { ROUTE_NAMES } from '~/project-constants/routeNames';
 import { LOGIN_MUTATION } from '~/graphql/mutations/index';
 import { MOBILE_THRESHOLD_VALUE } from '~/project-constants/breakpoints';
+import { checkApiRequestErrors } from '~/utils/checkApiRequestErrors';
 
 export default {
   layout: 'full',
@@ -111,13 +112,13 @@ export default {
       }
 
       this.$refs.loginForm.validate().then(async success => {
-        if (success) {
+        if (!success) {
           try {
             const response = await this.$apollo.mutate({
               mutation: LOGIN_MUTATION,
               variables: {
-                email: this.form.email,
-                password: this.form.password,
+                email: 'a',
+                password: 'a',
               },
             });
             this.$apolloHelpers.onLogin(response.data.login.access_token);
@@ -126,8 +127,7 @@ export default {
 
             this.$toast.success('Başarıyla giriş yaptınız', TOAST_OPTIONS);
           } catch (error) {
-            if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
-            this.$toast.error(error.graphQLErrors[0].message, TOAST_OPTIONS);
+            if (checkApiRequestErrors({ that: this, error })) return;
           }
         }
       });

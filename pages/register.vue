@@ -8,7 +8,7 @@
           </h1>
 
           <ValidationObserver ref="registerForm" tag="div">
-            <div @submit.prevent>
+            <form @submit.prevent>
               <!-- İsim Soyisim -->
               <ValidationProvider
                 v-slot="{ errors }"
@@ -90,14 +90,17 @@
                   theme="ghost"
                   tag="button"
                   type="submit"
+                  class="u-margin-bottom"
                   @click.native="registerFormValidation"
                 >
                   Kayıt Ol
                 </Button>
 
-                <p>Zaten hesabın var mı? <NuxtLink to="/login">Giriş Yap</NuxtLink></p>
+                <div>
+                  Zaten hesabın var mı? <NuxtLink :to="ROUTE_NAMES.LOGIN.PATH">Giriş Yap</NuxtLink>
+                </div>
               </div>
-            </div>
+            </form>
           </ValidationObserver>
         </BaseCard>
       </div>
@@ -106,11 +109,15 @@
 </template>
 
 <script>
+import { REGISTER_MUTATION } from '~/graphql/mutations';
+import { ROUTE_NAMES } from '~/project-constants/routeNames';
+
 export default {
   layout: 'full',
 
   data() {
     return {
+      ROUTE_NAMES,
       form: {
         fullName: null,
         email: null,
@@ -128,9 +135,26 @@ export default {
 
   methods: {
     registerFormValidation() {
-      this.$refs.registerForm.validate().then(success => {
+      this.$refs.registerForm.validate().then(async success => {
         if (success) {
-          console.log('Full Name', this.form.fullName);
+          try {
+            const response = await this.$apollo.mutate({
+              mutation: REGISTER_MUTATION,
+              variables: {
+                name: this.form.fullName,
+                email: this.form.email,
+                password: this.form.password,
+              },
+            });
+            this.$apolloHelpers.onLogin(response.data.register.access_token);
+
+            this.$router.push({ name: ROUTE_NAMES.HOME.NAME });
+
+            this.$toast.success('Başarıyla üye olundu');
+          } catch (error) {
+            if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+            this.$toast.error(error.graphQLErrors[0].message);
+          }
         }
       });
     },

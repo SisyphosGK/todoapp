@@ -75,6 +75,23 @@
             <div class="u-color-danger">{{ errors[0] }}</div>
           </ValidationProvider>
 
+          <ValidationProvider
+            v-slot="{ errors }"
+            name="Kullanıcı Ata"
+            tag="div"
+            class="u-margin-bottom-large"
+          >
+            <v-select
+              v-model="newProjectData.users"
+              :class="errors.length > 0 ? 'is-invalid' : null"
+              :options="userSelectOptions"
+              placeholder="Kullanıcı Seçin"
+            >
+              <div slot="no-options" class="u-color-primary">Seçenek Bulunamadı</div>
+            </v-select>
+
+            <div class="u-color-danger">{{ errors[0] }}</div>
+          </ValidationProvider>
           <div class="u-text-align-center">
             <Button
               theme="primary"
@@ -96,12 +113,18 @@ import { ROUTE_NAMES } from '~/project-constants/routeNames';
 import { MOBILE_THRESHOLD_VALUE } from '~/project-constants/breakpoints';
 import { CREATE_PROJECT } from '~/graphql/mutations';
 import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
+import { GET_USERS } from '~/graphql/queries';
 
 export default {
   data() {
     return {
       ROUTE_NAMES,
+
       addProjectModal: false,
+
+      allUsers: [],
+      userSelectOptions: [],
+
       newProjectData: {
         projectName: null,
         deadline: null,
@@ -110,11 +133,14 @@ export default {
     };
   },
 
+  mounted() {
+    this.getUsers();
+  },
+
   methods: {
     async validateAddProjectForm() {
       this.$refs.addProjectForm.validate().then(success => {
         if (success) {
-          console.log('Validate Project Form:' + this.$refs.addProjectForm);
           this.createNewProject();
         }
       });
@@ -130,7 +156,29 @@ export default {
             users: this.newProjectData.users,
           },
         });
+
         this.$toast.success('Proje başarıyla eklendi');
+      } catch (error) {
+        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
+          this.$apolloHelpers.onLogout();
+          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
+        }
+      }
+    },
+
+    async getUsers() {
+      try {
+        const response = await this.$apollo.query({
+          query: GET_USERS,
+        });
+
+        this.allUsers = response.data.users;
+
+        this.allUsers.forEach(user => {
+          this.userSelectOptions.push({ label: user.name, value: user.id });
+        });
       } catch (error) {
         if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
 

@@ -37,4 +37,9 @@ export const ROUTE_NAMES = {
     NAME: 'login',
     PATH: '/login',
   },
+
+  REGISTER: {
+    NAME: 'register',
+    PATH: '/register',
+  },
 };

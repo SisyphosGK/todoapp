@@ -42,3 +42,13 @@ export const GET_USER_DATA = gql`
     }
   }
 `;
+
+export const GET_USERS = gql`
+  query getUsers {
+    users {
+      id
+      name
+      email
+    }
+  }
+`;

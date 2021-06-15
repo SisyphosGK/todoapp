@@ -19,11 +19,6 @@ export const ROUTE_NAMES = {
   // PROJECTS
   //
 
-  PROJECTS: {
-    NAME: 'projects',
-    PATH: '/projects',
-  },
-
   PROJECT: {
     NAME: 'project',
     PATH: '/project',

@@ -89,7 +89,7 @@ export default {
         const response = await this.$apollo.query({
           query: GET_PROJECT_BY_ID,
           variables: {
-            id: parseInt(this.$route.params.id),
+            id: parseInt(this.$route.params.id, 10),
           },
         });
         console.log(response);

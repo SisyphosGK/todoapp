@@ -15,13 +15,16 @@
             >
               <svg-icon name="IconEdit" title="Profil Düzenle" />
             </Button>
+
             <img
               :src="userData.profilePictureSrc"
               :alt="userData.fullname"
               class="o-user-card__profile-picture"
             />
+
             <h2>{{ userData.fullname }}</h2>
-            <a :href="`mailto:` + userData.email">{{ userData.email }}</a>
+
+            <a :href="`mailto:${userData.email}`">{{ userData.email }}</a>
           </BaseCard>
         </div>
       </transition>
@@ -48,6 +51,7 @@
                 />
                 <div class="u-color-danger">{{ errors[0] }}</div>
               </ValidationProvider>
+
               <!-- E-Posta -->
               <ValidationProvider
                 v-slot="{ errors }"
@@ -86,6 +90,7 @@
                 <div class="u-color-danger">{{ errors[0] }}</div>
               </ValidationProvider>
 
+              <!-- Dosya Yükleme -->
               <ValidationProvider
                 v-slot="{ errors }"
                 name="Profil Resmi"
@@ -97,7 +102,6 @@
                   v-model="userData.profilePicture"
                   @fileUploaded="file => (form.profilePicture = file)"
                 />
-
                 <div class="u-color-danger">{{ errors[0] }}</div>
               </ValidationProvider>
 
@@ -110,6 +114,7 @@
                 >
                   Geri Dön
                 </Button>
+
                 <Button
                   theme="tertiary"
                   tag="button"

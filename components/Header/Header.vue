@@ -24,6 +24,7 @@
           <svg-icon name="IconUserCircle" />
         </Tooltip>
       </NuxtLink>
+
       <button type="button" class="c-header__button" @click="logout">
         <Tooltip content="Çıkış yap" theme="material" :hide-on-mobile="true">
           <svg-icon name="IconExit" />
@@ -95,6 +96,7 @@
 
             <div class="u-color-danger">{{ errors[0] }}</div>
           </ValidationProvider>
+
           <div class="u-text-align-center">
             <Button
               theme="primary"

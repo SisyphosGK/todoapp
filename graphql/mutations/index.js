@@ -60,12 +60,19 @@ export const UPDATE_PROFILE = gql`
     $name: String!
     $email: String!
     $password: String
+    $current_password: String!
     $profilePicture: Upload
   ) {
-    profile(name: $name, email: $email, password: $password, profilePicture: $profilePicture) {
+    profile(
+      name: $name
+      email: $email
+      password: $password
+      current_password: $current_password
+      profilePicture: $profilePicture
+    ) {
       id
       name
-      profile_img
+      profilePicture
     }
   }
 `;

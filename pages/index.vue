@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col col--xs-12 u-text-align-left">
         <h1 class="u-color-muted u-font-weight-600 u-margin-bottom-medium">
-          Hoşgeldin <b class="u-color-primary">Nietzsche !</b>
+          Hoşgeldin <b class="u-color-primary">{{ userName }} !</b>
         </h1>
       </div>
     </div>
@@ -94,7 +94,7 @@
 
 <script>
 import { ROUTE_NAMES } from '~/project-constants/routeNames';
-import { GET_ALL_PROJECTS } from '~/graphql/queries/index';
+import { GET_ALL_PROJECTS, GET_USER_DATA } from '~/graphql/queries/index';
 import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
 import STORE_PAGES_HOME from '~/store/pages/home/constants';
 import { mapGetters, mapActions } from 'vuex';
@@ -133,6 +133,7 @@ export default {
 
   data() {
     return {
+      userName: null,
       hasProjects: true,
 
       page: 1,
@@ -150,9 +151,27 @@ export default {
     });
 
     this.showProjects();
+    this.getMeData();
   },
 
   methods: {
+    async getMeData() {
+      try {
+        const response = await this.$apollo.query({
+          query: GET_USER_DATA,
+        });
+
+        this.userName = response.data.me.name;
+      } catch (error) {
+        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
+          this.$apolloHelpers.onLogout();
+          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
+        }
+      }
+    },
+
     getDateFromISOWithHourAndMinute,
 
     ...mapGetters({

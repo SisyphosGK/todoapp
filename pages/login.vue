@@ -116,15 +116,16 @@ export default {
       }
 
       this.$refs.loginForm.validate().then(async success => {
-        if (!success) {
+        if (success) {
           try {
             const response = await this.$apollo.mutate({
               mutation: LOGIN_MUTATION,
               variables: {
-                email: 'a',
-                password: 'a',
+                email: this.form.email,
+                password: this.form.password,
               },
             });
+
             this.$apolloHelpers.onLogin(response.data.login.access_token);
 
             this.$router.push({ name: ROUTE_NAMES.HOME.NAME });

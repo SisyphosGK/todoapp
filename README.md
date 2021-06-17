@@ -1,10 +1,11 @@
 # TODOAPP
 
+## Developed by
+[Gurkan Kose](https://github.com/SisyphosGK/) &
+[Yılmaz Oktav](https://github.com/yoktav)
+
 ## Ports
 localhost:3003 for Storybook
-
-## Notes
-- Use chart.js version 2 due to compability issues with vue-chartjs.
 
 ## Build Setup
 

@@ -1,5 +1,9 @@
 # TODOAPP
 
+## Developed by
+[Gurkan Kose](https://github.com/SisyphosGK/) &
+[Yılmaz Oktav](https://github.com/yoktav)
+
 ## Ports
 localhost:3003 for Storybook
 

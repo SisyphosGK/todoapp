@@ -21,7 +21,7 @@
     </label>
 
     <div v-if="file" class="c-file-upload__uploaded-file">
-      <img ref="qwe" src="#" class="c-file-upload__image" />
+      <img ref="uploadedFileRef" src="#" class="c-file-upload__image" />
 
       <button
         type="button"
@@ -40,7 +40,6 @@ export default {
   data() {
     return {
       file: null,
-      fileSrc: null,
     };
   },
 
@@ -50,7 +49,7 @@ export default {
       const reader = new FileReader();
 
       this.$nextTick(() => {
-        const myImg = this.$refs.qwe;
+        const myImg = this.$refs.uploadedFileRef;
 
         reader.addEventListener('load', function () {
           console.log(myImg.src);

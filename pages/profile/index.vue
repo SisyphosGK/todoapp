@@ -1,133 +1,139 @@
 <template>
   <div class="container u-margin-top-large">
     <div class="row">
-      <transition name="first-area">
-        <div class="col col--xs-4 u-margin-sides-auto">
-          <BaseCard class="o-user-card">
-            <Button
-              theme="primary"
-              :is-small="true"
-              :is-circle="true"
-              class="o-user-card__edit"
-              type="button"
-              tag="button"
-              @click.native="editFormVisible = true"
+      <div class="col col--xs-6 u-margin-sides-auto">
+        <BaseCard class="o-user-card">
+          <Button
+            theme="primary"
+            :is-small="true"
+            :is-circle="true"
+            class="o-user-card__edit"
+            type="button"
+            tag="button"
+            @click.native="profileEditModalVisible = true"
+          >
+            <svg-icon name="IconEdit" title="Profil Düzenle" />
+          </Button>
+
+          <img
+            :src="userData.profilePictureSrc"
+            :alt="userData.fullname"
+            class="o-user-card__profile-picture"
+          />
+
+          <h2>{{ userData.fullname }}</h2>
+
+          <a :href="`mailto:${userData.email}`">{{ userData.email }}</a>
+        </BaseCard>
+      </div>
+
+      <modal :modal-state="profileEditModalVisible" @closeModal="profileEditModalVisible = false">
+        <ValidationObserver ref="profileEditForm" tag="div">
+          <form @submit.prevent>
+            <!-- İsim Soyisim -->
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="İsim Soyisim"
+              rules="required"
+              class="u-margin-bottom"
+              tag="div"
             >
-              <svg-icon name="IconEdit" title="Profil Düzenle" />
-            </Button>
+              <Input
+                v-model="userData.fullname"
+                :is-invalid="errors.length > 0"
+                tag="input"
+                input-element="input"
+                input-type="text"
+                placeholder="İsim Soyisim"
+              />
+              <div class="u-color-danger">{{ errors[0] }}</div>
+            </ValidationProvider>
 
-            <img
-              :src="userData.profilePictureSrc"
-              :alt="userData.fullname"
-              class="o-user-card__profile-picture"
-            />
+            <!-- E-Posta -->
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="E-Posta"
+              rules="required|email"
+              class="u-margin-bottom"
+              tag="div"
+            >
+              <Input
+                v-model="userData.email"
+                :is-invalid="errors.length > 0"
+                tag="input"
+                input-element="input"
+                input-type="email"
+                placeholder="E-Posta"
+              />
+              <div class="u-color-danger">{{ errors[0] }}</div>
+            </ValidationProvider>
 
-            <h2>{{ userData.fullname }}</h2>
+            <!-- Geçerli Şifre -->
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="Geçerli Şifre"
+              rules="required"
+              class="u-margin-bottom"
+              tag="div"
+            >
+              <Input
+                v-model="userData.current_password"
+                :is-invalid="errors.length > 0"
+                tag="input"
+                input-element="input"
+                input-type="password"
+                placeholder="Geçerli Şifre"
+              />
+              <div class="u-color-danger">{{ errors[0] }}</div>
+            </ValidationProvider>
 
-            <a :href="`mailto:${userData.email}`">{{ userData.email }}</a>
-          </BaseCard>
-        </div>
-      </transition>
+            <!-- Yeni Şifre -->
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="Yeni Şifre"
+              class="u-margin-bottom"
+              tag="div"
+            >
+              <Input
+                v-model="userData.password"
+                :is-invalid="errors.length > 0"
+                tag="input"
+                input-element="input"
+                input-type="password"
+                placeholder="Yeni şifre"
+              />
+              <small>Şifrenizi değiştirmek istemiyorsanız boş geçilebilir.</small>
+              <div class="u-color-danger">{{ errors[0] }}</div>
+            </ValidationProvider>
 
-      <transition name="fade">
-        <div v-if="editFormVisible" class="col col--xs-12">
-          <ValidationObserver ref="profileEditForm" tag="div">
-            <form @submit.prevent>
-              <!-- İsim Soyisim -->
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="İsim Soyisim"
-                rules="required"
-                class="u-margin-bottom"
-                tag="div"
+            <!-- Dosya Yükleme -->
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="Profil Resmi"
+              tag="div"
+              class="u-margin-bottom-large"
+            >
+              <FileUpload
+                v-model="userData.profilePicture"
+                @fileUploaded="file => (userData.profilePicture = file)"
+              />
+
+              <div class="u-color-danger">{{ errors[0] }}</div>
+            </ValidationProvider>
+
+            <div class="u-text-align-center u-margin-top-2xlarge">
+              <Button
+                theme="tertiary"
+                tag="button"
+                type="submit"
+                @click.native="profileEditFormValidation"
               >
-                <Input
-                  v-model="userData.fullname"
-                  :is-invalid="errors.length > 0"
-                  tag="input"
-                  input-element="input"
-                  input-type="text"
-                  placeholder="İsim Soyisim"
-                />
-                <div class="u-color-danger">{{ errors[0] }}</div>
-              </ValidationProvider>
-
-              <!-- E-Posta -->
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="E-Posta"
-                rules="required|email"
-                class="u-margin-bottom"
-                tag="div"
-              >
-                <Input
-                  v-model="userData.email"
-                  :is-invalid="errors.length > 0"
-                  tag="input"
-                  input-element="input"
-                  input-type="email"
-                  placeholder="E-Posta"
-                />
-                <div class="u-color-danger">{{ errors[0] }}</div>
-              </ValidationProvider>
-
-              <!-- Şifre -->
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="Şifre"
-                rules="required"
-                class="u-margin-bottom"
-                tag="div"
-              >
-                <Input
-                  v-model="userData.password"
-                  :is-invalid="errors.length > 0"
-                  tag="input"
-                  input-element="input"
-                  input-type="password"
-                  placeholder="Şifre"
-                />
-                <div class="u-color-danger">{{ errors[0] }}</div>
-              </ValidationProvider>
-
-              <!-- Dosya Yükleme -->
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="Profil Resmi"
-                rules="required"
-                tag="div"
-                class="u-margin-bottom-large"
-              >
-                <FileUpload
-                  v-model="userData.profilePicture"
-                  @fileUploaded="file => (form.profilePicture = file)"
-                />
-                <div class="u-color-danger">{{ errors[0] }}</div>
-              </ValidationProvider>
-
-              <div class="u-text-align-center u-margin-top-2xlarge">
-                <Button
-                  theme="ghost"
-                  tag="button"
-                  type="submit"
-                  @click.native="editFormVisible = false"
-                >
-                  Geri Dön
-                </Button>
-
-                <Button
-                  theme="tertiary"
-                  tag="button"
-                  type="submit"
-                  @click.native="profileEditFormValidation"
-                >
-                  Güncelle
-                </Button>
-              </div>
-            </form>
-          </ValidationObserver>
-        </div>
-      </transition>
+                Güncelle
+              </Button>
+            </div>
+          </form>
+        </ValidationObserver>
+      </modal>
     </div>
   </div>
 </template>
@@ -143,11 +149,12 @@ export default {
 
   data() {
     return {
-      editFormVisible: false,
+      profileEditModalVisible: false,
 
       userData: {
         fullname: null,
         email: null,
+        current_password: null,
         password: null,
         profilePicture: null,
         profilePictureSrc: null,
@@ -171,7 +178,6 @@ export default {
         this.userData.fullname = response.data.me.name;
         this.userData.email = response.data.me.email;
         this.userData.profilePictureSrc = response.data.me.profilePicture;
-        console.log(response.data.me);
 
         this.$nuxt.$loading.finish();
       } catch (error) {
@@ -188,15 +194,19 @@ export default {
       this.$refs.profileEditForm.validate().then(async success => {
         if (success) {
           try {
-            await this.$apollo.mutate({
+            const response = await this.$apollo.mutate({
               mutation: UPDATE_PROFILE,
               variables: {
                 name: this.userData.fullname,
                 email: this.userData.email,
                 password: this.userData.password,
+                current_password: this.userData.current_password,
                 profilePicture: this.userData.profilePicture,
               },
             });
+
+            console.log(response.data);
+            this.userData.profilePictureSrc = response.data.profile.profilePicture;
 
             this.$toast.success('Profil Güncellendi');
           } catch (error) {
@@ -207,7 +217,6 @@ export default {
               this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
             }
           }
-          console.log('Profil edit' + success);
         }
       });
     },

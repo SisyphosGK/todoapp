@@ -10,13 +10,28 @@ export const LOGIN_MUTATION = gql`
   }
 `;
 
-export const SET_TASK_STATUS = gql`
-  mutation loginMutation($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
+export const REGISTER_MUTATION = gql`
+  mutation registerMutation($name: String!, $email: String!, $password: String!) {
+    register(name: $name, email: $email, password: $password) {
+      user_id
       access_token
-      token_type
-      expires_in
     }
+  }
+`;
+
+export const SET_TASK_STATUS = gql`
+  mutation setTaskStatus($step_id: Int!, $name: String!, $status: Int!) {
+    updateStep(step_id: $step_id, name: $name, status: $status) {
+      id
+      name
+      status
+    }
+  }
+`;
+
+export const DELETE_TASK = gql`
+  mutation deleteTaskMutation($step_id: Int!) {
+    deleteStep(step_id: $step_id)
   }
 `;
 
@@ -45,12 +60,19 @@ export const UPDATE_PROFILE = gql`
     $name: String!
     $email: String!
     $password: String
+    $current_password: String!
     $profilePicture: Upload
   ) {
-    profile(name: $name, email: $email, password: $password, profilePicture: $profilePicture) {
+    profile(
+      name: $name
+      email: $email
+      password: $password
+      current_password: $current_password
+      profilePicture: $profilePicture
+    ) {
       id
       name
-      profile_img
+      profilePicture
     }
   }
 `;

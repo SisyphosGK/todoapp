@@ -179,6 +179,8 @@ export default {
         this.userData.email = response.data.me.email;
         this.userData.profilePictureSrc = response.data.me.profilePicture;
 
+        this.checkProfilePictureSrc();
+
         this.$nuxt.$loading.finish();
       } catch (error) {
         if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
@@ -207,6 +209,7 @@ export default {
 
             console.log(response.data);
             this.userData.profilePictureSrc = response.data.profile.profilePicture;
+            this.checkProfilePictureSrc();
 
             this.$toast.success('Profil Güncellendi');
           } catch (error) {
@@ -219,6 +222,12 @@ export default {
           }
         }
       });
+    },
+
+    checkProfilePictureSrc() {
+      if (this.userData.profilePictureSrc == null) {
+        this.userData.profilePictureSrc = 'https://picsum.photos/200';
+      }
     },
   },
 };

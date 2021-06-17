@@ -71,6 +71,7 @@
 import { ROUTE_NAMES } from '~/project-constants/routeNames';
 import { LOGIN_MUTATION } from '~/graphql/mutations/index';
 import { MOBILE_THRESHOLD_VALUE } from '~/project-constants/breakpoints';
+import { checkApiRequestErrors } from '~/utils/checkApiRequestErrors';
 
 export default {
   layout: 'full',
@@ -124,14 +125,14 @@ export default {
                 password: this.form.password,
               },
             });
+
             this.$apolloHelpers.onLogin(response.data.login.access_token);
 
             this.$router.push({ name: ROUTE_NAMES.HOME.NAME });
 
             this.$toast.success('Başarıyla giriş yaptınız', TOAST_OPTIONS);
           } catch (error) {
-            if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
-            this.$toast.error(error.graphQLErrors[0].message, TOAST_OPTIONS);
+            if (checkApiRequestErrors({ that: this, error })) return;
           }
         }
       });

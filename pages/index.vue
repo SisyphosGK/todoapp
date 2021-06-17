@@ -8,43 +8,81 @@
       </div>
     </div>
 
-    <div v-if="projects" class="row">
-      <div
-        v-for="(project, i) in projects"
-        :key="i"
-        class="col col-12 col--md-6 col--lg-4 u-padding-right@2xl-up u-margin-bottom u-display-flex"
-      >
-        <BaseCard>
-          <NuxtLink :to="`${ROUTE_NAMES.PROJECT.PATH}/${project.id}`">
-            <h2>{{ project.name }}</h2>
+    <div v-if="projects">
+      <div class="row">
+        <div
+          v-for="(project, i) in projects"
+          :key="i"
+          class="
+            col col-12 col--md-6 col--lg-4
+            u-padding-right@2xl-up u-margin-bottom u-display-flex
+          "
+        >
+          <BaseCard>
+            <NuxtLink :to="`${ROUTE_NAMES.PROJECT.PATH}/${project.id}`">
+              <h2>{{ project.name }}</h2>
 
-            <p class="u-color-white u-margin-bottom">
-              {{ getDateFromISOWithHourAndMinute(project.deadline_at) }}
-            </p>
+              <p class="u-color-white u-margin-bottom">
+                {{ getDateFromISOWithHourAndMinute(project.deadline_at) }}
+              </p>
 
-            <div>
-              <b class="u-color-white">Toplam:</b>
-              <span class="u-color-primary">{{ todoCount }}</span>
-            </div>
+              <div>
+                <b class="u-color-white">Toplam:</b>
+                <span class="u-color-primary">{{ project.steps_count }}</span>
+              </div>
+            </NuxtLink>
+          </BaseCard>
+        </div>
 
-            <div>
-              <b class="u-color-white">Tamamlanan:</b>
-              <span class="u-color-success">{{ isDoneCount }}</span>
-            </div>
+        <div
+          v-for="another in anothers"
+          :key="another.id"
+          class="
+            col col-12 col--md-6 col--lg-4
+            u-padding-right@2xl-up u-margin-bottom u-display-flex
+          "
+        >
+          <BaseCard>
+            <NuxtLink :to="`${ROUTE_NAMES.PROJECT.PATH}/${another.id}`">
+              <h2>{{ another.name }}</h2>
 
-            <div>
-              <b class="u-color-white">Devam eden:</b>
-              <span class="u-color-warning">{{ inProgressCount }}</span>
-            </div>
-          </NuxtLink>
-        </BaseCard>
-      </div>
+              <p class="u-color-white u-margin-bottom">
+                {{ getDateFromISOWithHourAndMinute(another.deadline_at) }}
+              </p>
 
-      <div class="col">
-        <div class="u-text-align-center">
-          <NuxtLink :to="ROUTE_NAMES.PROJECTS.PATH">Hepsini Görüntüle</NuxtLink>
+              <div>
+                <b class="u-color-white">Toplam:</b>
+                <span class="u-color-primary">{{ another.steps_count }}</span>
+              </div>
+            </NuxtLink>
+          </BaseCard>
         </div>
       </div>
+
+      <InfiniteLoading @infinite="infiniteHandler">
+        <div slot="spinner">
+          <div
+            class="
+              p-1
+              text-center
+              font-weight-bolder
+              d-flex
+              align-items-center
+              justify-content-center
+            "
+          >
+            Yükleniyor
+          </div>
+        </div>
+
+        <div slot="no-more">
+          <div class="p-1 text-center font-weight-bold">Hepsi bu kadar.</div>
+        </div>
+
+        <div slot="no-results">
+          <div class="p-1 text-center font-weight-bold">Hiçbir sonuç bulunamadı.</div>
+        </div>
+      </InfiniteLoading>
     </div>
 
     <div v-else class="u-margin-top">
@@ -59,10 +97,14 @@ import { ROUTE_NAMES } from '~/project-constants/routeNames';
 import { GET_ALL_PROJECTS } from '~/graphql/queries/index';
 import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
 import STORE_PAGES_HOME from '~/store/pages/home/constants';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import { getDateFromISOWithHourAndMinute } from '~/utils/getDate';
 
+import InfiniteLoading from 'vue-infinite-loading';
+
 export default {
+  components: { InfiniteLoading },
+
   layout: 'page',
 
   async asyncData(context) {
@@ -91,11 +133,12 @@ export default {
 
   data() {
     return {
-      todoCount: 5,
-      isDoneCount: 10,
-      inProgressCount: 1,
+      hasProjects: true,
+
+      page: 1,
 
       projects: null,
+      anothers: [],
 
       ROUTE_NAMES,
     };
@@ -116,27 +159,47 @@ export default {
       getProjects: `${STORE_PAGES_HOME.BASE}/${STORE_PAGES_HOME.GETTERS.GET_PROJECTS}`,
     }),
 
+    ...mapActions({
+      setProjects: `${STORE_PAGES_HOME.BASE}/${STORE_PAGES_HOME.ACTIONS.SET_PROJECTS}`,
+    }),
+
     showProjects() {
       this.projects = this.getProjects().data;
-      console.log(this.projects);
     },
 
-    onTaskStatusChange(id, status) {
-      let item = this.todoList.find(i => i.id == id);
+    async infiniteHandler($state) {
+      try {
+        if (!this.getProjects().has_more_pages) {
+          $state.complete();
+          return;
+        }
 
-      if (item) {
-        item.isDone = status;
+        this.page += 1;
+
+        const response = await this.$apollo.query({
+          query: GET_ALL_PROJECTS,
+          variables: {
+            limit: 12,
+            page: this.page,
+          },
+        });
+
+        if (!response.data.jobs.has_more_pages) {
+          this.anothers.push(...response.data.jobs.data);
+          $state.complete();
+        } else {
+          this.anothers.push(...response.data.jobs.data);
+          $state.loaded();
+        }
+      } catch (error) {
+        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+
+        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
+          this.$apolloHelpers.onLogout();
+
+          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
+        }
       }
-    },
-
-    onTaskDelete(id) {
-      let index = this.todoList.findIndex(i => i.id == id);
-
-      if (index > -1) {
-        this.todoList.splice(index, 1);
-      }
-
-      console.log(this.todoList);
     },
   },
 };

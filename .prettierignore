@@ -2,5 +2,4 @@ node_modules
 package.json
 .nuxt
 assets/styles/libs/
-components/BvtTable/*/bvtnet-items-provider.js
 dist

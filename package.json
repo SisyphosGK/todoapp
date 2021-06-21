@@ -25,6 +25,7 @@
     "@nuxtjs/apollo": "^4.0.1-rc.5",
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/svg-sprite": "^0.5.2",
+    "buttono": "^1.0.2",
     "core-js": "^3.6.5",
     "graphql-tag": "^2.12.4",
     "nuxt": "^2.14.6",

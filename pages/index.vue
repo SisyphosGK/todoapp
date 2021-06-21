@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col col--xs-12 u-text-align-left">
         <h1 class="u-color-muted u-font-weight-600 u-margin-bottom-medium">
-          Hoşgeldin <b class="u-color-primary">{{ userName }} !</b>
+          Welcome <b class="u-color-primary">{{ userName }} !</b>
         </h1>
       </div>
     </div>
@@ -11,27 +11,20 @@
     <div v-if="projects">
       <div class="row">
         <div
-          v-for="(project, i) in projects"
+          v-for="(project, i) in projects.data"
           :key="i"
           class="
             col col-12 col--md-6 col--lg-4
             u-padding-right@2xl-up u-margin-bottom u-display-flex
           "
         >
-          <BaseCard>
-            <NuxtLink :to="`${ROUTE_NAMES.PROJECT.PATH}/${project.id}`">
-              <h2>{{ project.name }}</h2>
-
-              <p class="u-color-white u-margin-bottom">
-                {{ getDateFromISOWithHourAndMinute(project.deadline_at) }}
-              </p>
-
-              <div>
-                <b class="u-color-white">Toplam:</b>
-                <span class="u-color-primary">{{ project.steps_count }}</span>
-              </div>
-            </NuxtLink>
-          </BaseCard>
+          <ProjectItem
+            :id="project.id"
+            :project-name="project.name"
+            :deadline-at="project.deadline_at"
+            :steps-count="project.steps_count"
+            :users="project.users"
+          />
         </div>
 
         <div
@@ -42,20 +35,13 @@
             u-padding-right@2xl-up u-margin-bottom u-display-flex
           "
         >
-          <BaseCard>
-            <NuxtLink :to="`${ROUTE_NAMES.PROJECT.PATH}/${another.id}`">
-              <h2>{{ another.name }}</h2>
-
-              <p class="u-color-white u-margin-bottom">
-                {{ getDateFromISOWithHourAndMinute(another.deadline_at) }}
-              </p>
-
-              <div>
-                <b class="u-color-white">Toplam:</b>
-                <span class="u-color-primary">{{ another.steps_count }}</span>
-              </div>
-            </NuxtLink>
-          </BaseCard>
+          <ProjectItem
+            :id="another.id"
+            :project-name="another.name"
+            :deadline-at="another.deadline_at"
+            :steps-count="another.steps_count"
+            :users="another.users"
+          />
         </div>
       </div>
 
@@ -71,16 +57,16 @@
               justify-content-center
             "
           >
-            Yükleniyor
+            Loading
           </div>
         </div>
 
         <div slot="no-more">
-          <div class="p-1 text-center font-weight-bold">Hepsi bu kadar.</div>
+          <div class="p-1 text-center font-weight-bold">That is all.</div>
         </div>
 
         <div slot="no-results">
-          <div class="p-1 text-center font-weight-bold">Hiçbir sonuç bulunamadı.</div>
+          <div class="p-1 text-center font-weight-bold">That is all.</div>
         </div>
       </InfiniteLoading>
     </div>
@@ -95,11 +81,10 @@
 <script>
 import { ROUTE_NAMES } from '~/project-constants/routeNames';
 import { GET_ALL_PROJECTS, GET_USER_DATA } from '~/graphql/queries/index';
+import { checkApiRequestErrors } from '~/utils/checkApiRequestErrors';
 import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
 import STORE_PAGES_HOME from '~/store/pages/home/constants';
 import { mapGetters, mapActions } from 'vuex';
-import { getDateFromISOWithHourAndMinute } from '~/utils/getDate';
-
 import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
@@ -116,6 +101,7 @@ export default {
           page: 1,
         },
       });
+      console.log(response.data.jobs);
 
       await context.store.dispatch(
         `${STORE_PAGES_HOME.BASE}/${STORE_PAGES_HOME.ACTIONS.SET_PROJECTS}`,
@@ -140,7 +126,6 @@ export default {
 
       projects: null,
       anothers: [],
-
       ROUTE_NAMES,
     };
   },
@@ -150,8 +135,8 @@ export default {
       this.$nuxt.$loading.finish();
     });
 
-    this.showProjects();
     this.getMeData();
+    this.showProjects();
   },
 
   methods: {
@@ -163,16 +148,9 @@ export default {
 
         this.userName = response.data.me.name;
       } catch (error) {
-        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
-
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
-          this.$apolloHelpers.onLogout();
-          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
-        }
+        if (checkApiRequestErrors({ that: this, error })) return;
       }
     },
-
-    getDateFromISOWithHourAndMinute,
 
     ...mapGetters({
       getProjects: `${STORE_PAGES_HOME.BASE}/${STORE_PAGES_HOME.GETTERS.GET_PROJECTS}`,
@@ -211,13 +189,7 @@ export default {
           $state.loaded();
         }
       } catch (error) {
-        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
-
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
-          this.$apolloHelpers.onLogout();
-
-          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
-        }
+        if (checkApiRequestErrors({ that: this, error })) return;
       }
     },
   },
@@ -229,7 +201,5 @@ export default {
 
 .o-todo-list {
   @include list-unstyled();
-
-  color: $color-white;
 }
 </style>

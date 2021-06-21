@@ -19,8 +19,8 @@ export const REGISTER_MUTATION = gql`
   }
 `;
 
-export const SET_TASK_STATUS = gql`
-  mutation setTaskStatus($step_id: Int!, $name: String!, $status: Int!) {
+export const UPDATE_TASK = gql`
+  mutation updateTask($step_id: Int!, $name: String!, $status: Int!) {
     updateStep(step_id: $step_id, name: $name, status: $status) {
       id
       name

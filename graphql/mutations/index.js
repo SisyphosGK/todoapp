@@ -68,6 +68,12 @@ export const EDIT_PROJECT = gql`
   }
 `;
 
+export const DELETE_PROJECT = gql`
+  mutation deleteProjectMutation($job_id: Int!) {
+    deleteJob(job_id: $job_id)
+  }
+`;
+
 export const UPDATE_PROFILE = gql`
   mutation updateProfileMutation(
     $name: String!

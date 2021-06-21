@@ -1,8 +1,10 @@
 # TODOAPP
+Nuxt.js & Apollo Graphql - TodoApp https://github.com/YasinKose/todo
+## Credits
+[@SisyphosGK](https://github.com/SisyphosGK/) &
+[@yoktav](https://github.com/yoktav/) (frontend)
 
-## Developed by
-[Gurkan Kose](https://github.com/SisyphosGK/) &
-[Yılmaz Oktav](https://github.com/yoktav)
+Backend coded by [@YasinKose](https://github.com/YasinKose/) in [this](https://github.com/YasinKose/todo) repo.
 
 ## Ports
 localhost:3003 for Storybook

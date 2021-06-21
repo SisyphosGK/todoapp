@@ -1,5 +1,5 @@
 # TODOAPP
-Nuxt.js & Apollo Graphql - TodoApp https://github.com/YasinKose/todo
+Nuxt.js & Apollo Graphql - TodoApp
 ## Credits
 [@SisyphosGK](https://github.com/SisyphosGK/) &
 [@yoktav](https://github.com/yoktav/)

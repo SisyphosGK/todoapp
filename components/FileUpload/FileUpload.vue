@@ -52,7 +52,6 @@ export default {
         const myImg = this.$refs.uploadedFileRef;
 
         reader.addEventListener('load', function () {
-          console.log(myImg.src);
           myImg.src = this.result;
         });
         reader.readAsDataURL(this.file);

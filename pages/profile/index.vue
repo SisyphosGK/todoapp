@@ -202,7 +202,6 @@ export default {
               },
             });
 
-            console.log(response.data);
             this.userData.profilePictureSrc = response.data.profile.profilePicture;
             this.checkProfilePictureSrc();
 

@@ -101,7 +101,6 @@ export default {
           page: 1,
         },
       });
-      console.log(response.data.jobs);
 
       await context.store.dispatch(
         `${STORE_PAGES_HOME.BASE}/${STORE_PAGES_HOME.ACTIONS.SET_PROJECTS}`,

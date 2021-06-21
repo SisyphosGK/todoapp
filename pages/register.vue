@@ -111,6 +111,7 @@
 <script>
 import { REGISTER_MUTATION } from '~/graphql/mutations';
 import { ROUTE_NAMES } from '~/project-constants/routeNames';
+import { checkApiRequestErrors } from '~/utils/checkApiRequestErrors';
 
 export default {
   layout: 'full',
@@ -146,14 +147,14 @@ export default {
                 password: this.form.password,
               },
             });
+
             this.$apolloHelpers.onLogin(response.data.register.access_token);
 
             this.$router.push({ name: ROUTE_NAMES.HOME.NAME });
 
             this.$toast.success('Başarıyla üye olundu');
           } catch (error) {
-            if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
-            this.$toast.error(error.graphQLErrors[0].message);
+            if (checkApiRequestErrors({ that: this, error })) return;
           }
         }
       });

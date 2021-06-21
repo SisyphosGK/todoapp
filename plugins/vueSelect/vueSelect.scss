@@ -18,9 +18,15 @@
   .vs__open-indicator {
     fill: $g-border-color;
   }
+
   .vs__selected {
     background-color: $color-primary;
+
+    .vs__deselect {
+      margin-left: gap(3xsmall);
+    }
   }
+
   .vs__selected,
   .vs__search {
     padding-top: pad(4xsmall);

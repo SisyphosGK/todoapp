@@ -1,18 +1,29 @@
 @import '../../assets/styles/abstracts/index';
 
 .c-list-item {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: pad(4xsmall) pad(2xsmall);
-  margin-bottom: gap(small);
-  background-color: $color-primary;
-  border-radius: px-to-rem(24px);
+  background-color: transparent;
   transition: opacity $g-transition-timing-function $g-transition-duration,
     background-color $g-transition-timing-function ($g-transition-duration * 2);
 
-  &.done {
-    background-color: $color-success;
+  &::after {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 96%;
+    border-bottom: 1px solid $g-border-color;
+    content: '';
+    transform: translate3d(-50%, 0, 0);
+  }
+
+  &.is-done {
+    &::after {
+      border-color: $color-success;
+    }
   }
 
   &:hover {
@@ -23,17 +34,19 @@
   }
 
   &__checkbox {
+    $size: px-to-em(18px);
+
     position: absolute;
     visibility: hidden;
 
     + label {
       position: relative;
-      width: px-to-rem(10px);
-      height: px-to-rem(10px);
+      width: $size;
+      height: $size;
       flex: 0 0 auto;
       border: px-to-rem(1px) solid lighten($color-white, 20);
       margin-bottom: 0;
-      border-radius: px-to-rem(10px);
+      border-radius: 50%;
       text-decoration: line-through;
       transition: transform $g-transition-timing-function $g-transition-duration,
         border-color $g-transition-timing-function $g-transition-duration;
@@ -69,9 +82,9 @@
           width: px-to-rem(24px);
           height: px-to-rem(12px);
           border-bottom-width: px-to-rem(4px);
-          border-color: $color-white-lilac;
           border-left-width: px-to-rem(4px);
           transform: rotate(-45deg);
+          border-color: $color-success;
         }
         /* stylelint-enable */
       }
@@ -99,7 +112,7 @@
       width: px-to-rem(10px);
       height: px-to-rem(1px);
       margin: auto;
-      background-color: $color-secondary;
+      background-color: $color-primary;
       content: '';
       transform: rotate(45deg);
       transition: transform $g-transition-timing-function $g-transition-duration;

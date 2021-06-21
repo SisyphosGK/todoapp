@@ -8,25 +8,25 @@
         class="c-header__button"
         @click="addProjectModal = true"
       >
-        <Tooltip content="Yeni proje oluştur" theme="material" :hide-on-mobile="true">
-          <svg-icon name="IconPlus" title="Yeni proje oluştur" />
+        <Tooltip content="Create new project" theme="material" :hide-on-mobile="true">
+          <svg-icon name="IconPlus" title="Create new project" />
         </Tooltip>
       </button>
 
       <div class="c-header__brand">
         <NuxtLink :to="ROUTE_NAMES.HOME.PATH" class="c-header__brand--link">
-          <svg-icon name="IconCheckmark" title="Yeni proje oluştur" /> TodoAPP</NuxtLink
+          <svg-icon name="IconCheckmark" title="TodoApp" /> TodoAPP</NuxtLink
         >
       </div>
 
       <NuxtLink :to="ROUTE_NAMES.PROFILE.PATH" class="c-header__button">
-        <Tooltip content="Profil" theme="material" :hide-on-mobile="true">
+        <Tooltip content="Profile" theme="material" :hide-on-mobile="true">
           <svg-icon name="IconUserCircle" />
         </Tooltip>
       </NuxtLink>
 
       <button type="button" class="c-header__button" @click="logout">
-        <Tooltip content="Çıkış yap" theme="material" :hide-on-mobile="true">
+        <Tooltip content="Logout" theme="material" :hide-on-mobile="true">
           <svg-icon name="IconExit" />
         </Tooltip>
       </button>
@@ -34,14 +34,14 @@
 
     <modal :modal-state="addProjectModal" @closeModal="addProjectModal = false">
       <h4 class="h2 u-margin-bottom-small">
-        Yeni Proje Oluştur <svg-icon name="IconPlus" title="Yeni proje oluştur" />
+        Create New Project <svg-icon name="IconPlus" title="Create New Project" />
       </h4>
 
       <ValidationObserver ref="addProjectForm" tag="div">
         <form @submit.prevent>
           <ValidationProvider
             v-slot="{ errors }"
-            name="Proje İsmi"
+            name="Project Name"
             rules="required"
             tag="div"
             class="u-margin-bottom-large"
@@ -52,7 +52,7 @@
               input-type="text"
               input-element="input"
               name="projectName"
-              placeholder="Proje İsmi"
+              placeholder="Project Name"
               :is-invalid="errors.length > 0"
               :has-label-text="false"
             />
@@ -62,7 +62,7 @@
 
           <ValidationProvider
             v-slot="{ errors }"
-            name="Proje Bitiş Tarihi"
+            name="Project deadline"
             rules="required"
             tag="div"
             class="u-margin-bottom-large"
@@ -72,7 +72,7 @@
               :is-invalid="errors.length > 0"
               :has-label-text="false"
               name="projectDeadline"
-              placeholder="Proje Bitiş Tarihi"
+              placeholder="Project deadline"
             />
 
             <div class="u-color-danger">{{ errors[0] }}</div>
@@ -80,7 +80,7 @@
 
           <ValidationProvider
             v-slot="{ errors }"
-            name="Kullanıcı Ata"
+            name="Select User"
             tag="div"
             class="u-margin-bottom-large"
           >
@@ -88,23 +88,18 @@
               v-model="usersSelectModel"
               :class="errors.length > 0 ? 'is-invalid' : null"
               :options="userSelectOptions"
-              placeholder="Kullanıcı Seçin"
+              placeholder="Select user"
               multiple
             >
-              <div slot="no-options" class="u-color-primary">Seçenek Bulunamadı</div>
+              <div slot="no-options" class="u-color-primary">Not found any options</div>
             </v-select>
 
             <div class="u-color-danger">{{ errors[0] }}</div>
           </ValidationProvider>
 
           <div class="u-text-align-center">
-            <Button
-              theme="primary"
-              tag="button"
-              type="submit"
-              @click.native="validateAddProjectForm"
-            >
-              Oluştur
+            <Button theme="primary" tag="button" type="submit" @click.native="createNewProject">
+              Create
             </Button>
           </div>
         </form>
@@ -117,8 +112,8 @@
 import { ROUTE_NAMES } from '~/project-constants/routeNames';
 import { MOBILE_THRESHOLD_VALUE } from '~/project-constants/breakpoints';
 import { CREATE_PROJECT } from '~/graphql/mutations';
-import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
 import { GET_USERS, LOGOUT } from '~/graphql/queries';
+import { checkApiRequestErrors } from '~/utils/checkApiRequestErrors';
 
 export default {
   data() {
@@ -144,40 +139,33 @@ export default {
   },
 
   methods: {
-    async validateAddProjectForm() {
-      this.$refs.addProjectForm.validate().then(success => {
+    createNewProject() {
+      this.$refs.addProjectForm.validate().then(async success => {
         if (success) {
-          this.createNewProject();
+          if (this.usersSelectModel != null) {
+            this.usersSelectModel.forEach(selectedUser => {
+              this.newProjectData.users.push(selectedUser.value);
+            });
+          }
+
+          try {
+            await this.$apollo.mutate({
+              mutation: CREATE_PROJECT,
+              variables: {
+                name: this.newProjectData.projectName,
+                deadline_at: this.newProjectData.deadline,
+                users: this.newProjectData.users,
+              },
+            });
+
+            this.addProjectModal = false;
+
+            this.$toast.success('Successfully add new project');
+          } catch (error) {
+            if (checkApiRequestErrors({ that: this, error })) return;
+          }
         }
       });
-    },
-
-    async createNewProject() {
-      if (this.usersSelectModel != null) {
-        this.usersSelectModel.forEach(selectedUser => {
-          this.newProjectData.users.push(selectedUser.value);
-        });
-      }
-
-      try {
-        await this.$apollo.mutate({
-          mutation: CREATE_PROJECT,
-          variables: {
-            name: this.newProjectData.projectName,
-            deadline_at: this.newProjectData.deadline,
-            users: this.newProjectData.users,
-          },
-        });
-
-        this.$toast.success('Proje başarıyla eklendi');
-      } catch (error) {
-        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
-
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
-          this.$apolloHelpers.onLogout();
-          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
-        }
-      }
     },
 
     async getUsers() {
@@ -192,12 +180,7 @@ export default {
           this.userSelectOptions.push({ label: user.name, value: user.id });
         });
       } catch (error) {
-        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
-
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
-          this.$apolloHelpers.onLogout();
-          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
-        }
+        if (checkApiRequestErrors({ that: this, error })) return;
       }
     },
 
@@ -229,12 +212,7 @@ export default {
 
         this.$apolloHelpers.onLogout();
       } catch (error) {
-        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
-
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
-          this.$apolloHelpers.onLogout();
-          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
-        }
+        if (checkApiRequestErrors({ that: this, error })) return;
       }
 
       this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });

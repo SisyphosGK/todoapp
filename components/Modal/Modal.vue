@@ -5,8 +5,8 @@
 
       <div class="c-modal__container">
         <button type="button" class="c-modal__close" @click="$emit('closeModal')">
-          <Tooltip content="Kapat" :hide-on-mobile="true">
-            <svg-icon :name="`IconCross`" title="Kapat" class="u-cursor-pointer" />
+          <Tooltip content="Close" :hide-on-mobile="true">
+            <svg-icon :name="`IconCross`" title="Close" class="u-cursor-pointer" />
           </Tooltip>
         </button>
 

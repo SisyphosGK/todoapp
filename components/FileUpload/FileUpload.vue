@@ -15,8 +15,8 @@
       />
 
       <div class="c-file-upload__text">
-        <svg-icon name="IconUpload" title="Dosya Yükle" />
-        Resim yüklemek için sürükleyip bırakın
+        <svg-icon name="IconUpload" title="Upload file" />
+        Drag and drop to upload image
       </div>
     </label>
 
@@ -25,11 +25,11 @@
 
       <button
         type="button"
-        title="Dosyayı Sil"
+        title="Remove File"
         class="c-file-upload__remove-image"
         @click="removeFile()"
       >
-        <svg-icon :name="`IconCross`" title="Kapat" />
+        <svg-icon :name="`IconCross`" title="Close" />
       </button>
     </div>
   </div>

@@ -55,6 +55,19 @@ export const CREATE_PROJECT = gql`
   }
 `;
 
+export const EDIT_PROJECT = gql`
+  mutation editProjectMutation(
+    $job_id: Int!
+    $name: String!
+    $deadline_at: String!
+    $users: [Int]
+  ) {
+    updateJob(job_id: $job_id, name: $name, deadline_at: $deadline_at, users: $users) {
+      id
+    }
+  }
+`;
+
 export const UPDATE_PROFILE = gql`
   mutation updateProfileMutation(
     $name: String!

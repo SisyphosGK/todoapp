@@ -2,7 +2,7 @@
 Nuxt.js & Apollo Graphql - TodoApp https://github.com/YasinKose/todo
 ## Credits
 [@SisyphosGK](https://github.com/SisyphosGK/) &
-[@yoktav](https://github.com/yoktav/) (frontend)
+[@yoktav](https://github.com/yoktav/)
 
 Backend coded by [@YasinKose](https://github.com/YasinKose/) in [this](https://github.com/YasinKose/todo) repo.
 

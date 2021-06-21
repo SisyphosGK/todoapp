@@ -44,6 +44,7 @@ $color-white-lilac: #f2f5fa;
 $color-logan: #a3a5c9;
 $color-perfume: #b5baf8;
 $color-nero: #202020;
+$color-gray: #808080;
 
 //
 // Project Colors
@@ -65,9 +66,9 @@ $g-text-color: $color-light-gray !default;
 $g-headings-color: inherit !default;
 $g-link-color: $color-primary !default;
 $g-link-hover-color: darken($g-link-color, 15%) !default;
-$g-border-color: rgba($color-primary, 0.34) !default;
+$g-border-color: $color-gray !default;
 $g-text-muted-color: $color-white-lilac !default;
-$g-hr-border-color: rgba($color-black, 0.12) !default;
+$g-hr-border-color: $g-border-color !default;
 
 //
 // Custom Scrollbar

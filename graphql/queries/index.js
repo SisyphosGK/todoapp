@@ -12,6 +12,13 @@ export const GET_ALL_PROJECTS = gql`
         name
         deadline_at
         steps_count
+
+        users {
+          id
+          name
+          email
+          profilePicture
+        }
       }
     }
   }
@@ -27,6 +34,12 @@ export const GET_PROJECT_BY_ID = gql`
         id
         name
         status
+      }
+
+      users {
+        id
+        name
+        email
       }
     }
   }

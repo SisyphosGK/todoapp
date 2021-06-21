@@ -12,7 +12,7 @@
             tag="button"
             @click.native="profileEditModalVisible = true"
           >
-            <svg-icon name="IconEdit" title="Profil Düzenle" />
+            <svg-icon name="IconEdit" title="Edit Profile" />
           </Button>
 
           <img
@@ -30,10 +30,10 @@
       <modal :modal-state="profileEditModalVisible" @closeModal="profileEditModalVisible = false">
         <ValidationObserver ref="profileEditForm" tag="div">
           <form @submit.prevent>
-            <!-- İsim Soyisim -->
+            <!-- Fullname -->
             <ValidationProvider
               v-slot="{ errors }"
-              name="İsim Soyisim"
+              name="Fullname"
               rules="required"
               class="u-margin-bottom"
               tag="div"
@@ -44,15 +44,15 @@
                 tag="input"
                 input-element="input"
                 input-type="text"
-                placeholder="İsim Soyisim"
+                placeholder="Enter your fullname"
               />
               <div class="u-color-danger">{{ errors[0] }}</div>
             </ValidationProvider>
 
-            <!-- E-Posta -->
+            <!-- E-Mail -->
             <ValidationProvider
               v-slot="{ errors }"
-              name="E-Posta"
+              name="E-Mail"
               rules="required|email"
               class="u-margin-bottom"
               tag="div"
@@ -63,15 +63,15 @@
                 tag="input"
                 input-element="input"
                 input-type="email"
-                placeholder="E-Posta"
+                placeholder="Enter your e-mail address"
               />
               <div class="u-color-danger">{{ errors[0] }}</div>
             </ValidationProvider>
 
-            <!-- Geçerli Şifre -->
+            <!-- Current Password -->
             <ValidationProvider
               v-slot="{ errors }"
-              name="Geçerli Şifre"
+              name="Current Password"
               rules="required"
               class="u-margin-bottom"
               tag="div"
@@ -82,15 +82,15 @@
                 tag="input"
                 input-element="input"
                 input-type="password"
-                placeholder="Geçerli Şifre"
+                placeholder="Enter your current password"
               />
               <div class="u-color-danger">{{ errors[0] }}</div>
             </ValidationProvider>
 
-            <!-- Yeni Şifre -->
+            <!-- New Password -->
             <ValidationProvider
               v-slot="{ errors }"
-              name="Yeni Şifre"
+              name="New Password"
               class="u-margin-bottom"
               tag="div"
             >
@@ -100,16 +100,17 @@
                 tag="input"
                 input-element="input"
                 input-type="password"
-                placeholder="Yeni şifre"
+                placeholder="Enter new password for change password"
               />
-              <small>Şifrenizi değiştirmek istemiyorsanız boş geçilebilir.</small>
+              <small>If you do not want to change your password, you can leave it blank.</small>
+
               <div class="u-color-danger">{{ errors[0] }}</div>
             </ValidationProvider>
 
-            <!-- Dosya Yükleme -->
+            <!-- Upload file -->
             <ValidationProvider
               v-slot="{ errors }"
-              name="Profil Resmi"
+              name="Profile Picture"
               tag="div"
               class="u-margin-bottom-large"
             >
@@ -128,7 +129,7 @@
                 type="submit"
                 @click.native="profileEditFormValidation"
               >
-                Güncelle
+                Update
               </Button>
             </div>
           </form>
@@ -139,10 +140,9 @@
 </template>
 
 <script>
-import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
 import { GET_USER_DATA } from '~/graphql/queries';
 import { UPDATE_PROFILE } from '~/graphql/mutations';
-import { ROUTE_NAMES } from '~/project-constants/routeNames';
+import { checkApiRequestErrors } from '~/utils/checkApiRequestErrors';
 
 export default {
   layout: 'page',
@@ -183,12 +183,7 @@ export default {
 
         this.$nuxt.$loading.finish();
       } catch (error) {
-        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
-
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
-          this.$apolloHelpers.onLogout();
-          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
-        }
+        if (checkApiRequestErrors({ that: this, error })) return;
       }
     },
 
@@ -211,14 +206,11 @@ export default {
             this.userData.profilePictureSrc = response.data.profile.profilePicture;
             this.checkProfilePictureSrc();
 
-            this.$toast.success('Profil Güncellendi');
-          } catch (error) {
-            if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+            this.profileEditModalVisible = false;
 
-            if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
-              this.$apolloHelpers.onLogout();
-              this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
-            }
+            this.$toast.success('Profile is updated');
+          } catch (error) {
+            if (checkApiRequestErrors({ that: this, error })) return;
           }
         }
       });

@@ -2,9 +2,12 @@
   <div class="container u-margin-top-large">
     <div class="row">
       <div class="col col--xs-12 u-text-align-left">
-        <h1 class="u-color-muted u-font-weight-600 u-margin-bottom-medium">
-          {{ projectName }}
+        <h1 class="u-color-muted u-font-weight-600 u-margin-bottom-3xsmall">
+          <span class="u-color-primary"> {{ projectData.name }}</span>
         </h1>
+        <p class="u-margin-bottom-medium u-margin-top-0">
+          Deadline: <span class="u-color-primary"> {{ projectData.deadline }}</span>
+        </p>
       </div>
 
       <div class="col col-12 col--2xl-12 u-padding-right@2xl-up u-margin-bottom">
@@ -15,40 +18,56 @@
             input-element="input"
             input-type="text"
             :has-label-text="false"
-            placeholder="Not Alın"
+            placeholder="Add a task..."
           />
         </form>
       </div>
 
-      <div class="col col-12 col--2xl-12 u-padding-right@2xl-up u-margin-bottom-small@xl-down">
+      <div class="col col-12 col--2xl-12 u-padding-right@2xl-up u-margin-ends-small">
         <div class="u-display-flex u-justify-content-space-between u-align-items-center">
           <div>
-            <h2 class="u-margin-0">Yapılacaklar</h2>
-          </div>
-
-          <div v-if="todoList.length >= 1" class="o-todo-filter">
-            <v-select
-              v-model="selectedFilter"
-              :options="['Tümü', 'Tamamlanmışlar', 'Devam Edenler']"
-              class="u-margin-right-small"
-            />
+            <h2 class="u-margin-0">Todo's</h2>
           </div>
         </div>
 
-        <ul v-if="todoList.length >= 1" class="o-todo-list">
-          <ListItem
-            v-for="item in todoList"
-            :id="item.id"
-            :key="item.id"
-            :task-name="item.name"
-            :is-done="item.status"
-            @taskDeleted="onTaskDeleted"
-          />
-        </ul>
+        <ListItem
+          v-for="item in todoList"
+          :id="item.id"
+          :key="item.id"
+          :task-name="item.name"
+          :is-done="item.status"
+          class="u-padding-ends-xsmall"
+          @taskDeleted="onTaskDeleted"
+          @updateTask="updateTask"
+        />
 
         <div v-if="todoList.length < 1" class="u-margin-top">
           <svg-icon name="IconAlert" title="Uyarı" class="u-color-warning u-font-size-medium" />
-          Yapılacaklar listesi boş
+          Todo list is empty
+        </div>
+      </div>
+
+      <div class="col col-12 col--2xl-12 u-padding-right@2xl-up u-margin-ends-small">
+        <div class="u-display-flex u-justify-content-space-between u-align-items-center">
+          <div>
+            <h2 class="u-margin-0">Completed Tasks</h2>
+          </div>
+        </div>
+
+        <ListItem
+          v-for="item in completedTasks"
+          :id="item.id"
+          :key="item.id"
+          :task-name="item.name"
+          :is-done="item.status"
+          class="u-padding-ends-xsmall"
+          @taskDeleted="onTaskDeleted"
+          @updateTask="updateTask"
+        />
+
+        <div v-if="completedTasks.length < 1" class="u-margin-top">
+          <svg-icon name="IconAlert" title="Uyarı" class="u-color-warning u-font-size-medium" />
+          No completed task found yet
         </div>
       </div>
     </div>
@@ -56,21 +75,28 @@
 </template>
 
 <script>
-import { ROUTE_NAMES } from '~/project-constants/routeNames';
 import { GET_PROJECT_BY_ID } from '~/graphql/queries/index';
-import { ADD_NEW_TASK } from '~/graphql/mutations/index';
-import { GRAPHQL_ERROR_MESSAGES } from '~/graphql/errors';
+import { ADD_NEW_TASK, UPDATE_TASK } from '~/graphql/mutations/index';
+import { getDateFromISO } from '~/utils/getDate';
+import { checkApiRequestErrors } from '~/utils/checkApiRequestErrors';
 
 export default {
   layout: 'page',
 
   data() {
     return {
-      projectName: '',
+      projectData: {
+        name: null,
+        deadline: null,
+      },
+
       selectedCategory: 'todoApp',
       selectedFilter: 'Tümü',
       todoInputModel: '',
+
+      allTasks: [],
       todoList: [],
+      completedTasks: [],
     };
   },
 
@@ -91,22 +117,37 @@ export default {
             id: parseInt(this.$route.params.id, 10),
           },
         });
-        console.log(response);
 
-        this.projectName = response.data.job.name;
-        this.todoList = response.data.job.steps;
+        this.projectData.name = response.data.job.name;
+        this.projectData.deadline = getDateFromISO(response.data.job.deadline_at);
+
+        this.allTasks = response.data.job.steps;
+        this.sortTasks();
       } catch (error) {
-        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
-
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
-          this.$apolloHelpers.onLogout();
-          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
-        }
+        if (checkApiRequestErrors({ that: this, error })) return;
       }
     },
 
+    sortTasks() {
+      this.todoList = [];
+      this.completedTasks = [];
+
+      this.allTasks.forEach(item => {
+        let task = {
+          id: item.id,
+          name: item.name,
+          status: item.status,
+        };
+
+        if (task.status == 0) {
+          this.todoList.push(task);
+        } else {
+          this.completedTasks.push(task);
+        }
+      });
+    },
+
     async addNewTask() {
-      console.log(parseInt(this.$route.params.id, 10));
       if (this.todoInputModel == '') {
         return;
       }
@@ -124,29 +165,47 @@ export default {
         let newTask = {
           id: response.data.createStep.id,
           name: response.data.createStep.name,
-          isDone: response.data.createStep.status,
+          status: response.data.createStep.status,
         };
 
-        this.todoList.push(newTask);
+        this.allTasks.push(newTask);
+        this.sortTasks();
+
         this.todoInputModel = '';
-
-        console.log(response.data.createStep.id);
       } catch (error) {
-        if (process.env.NUXT_ENV_MODE === 'development') console.log(error);
+        if (checkApiRequestErrors({ that: this, error })) return;
+      }
+    },
 
-        if (error.graphQLErrors[0].message === GRAPHQL_ERROR_MESSAGES.UNAUTHORIZED) {
-          this.$apolloHelpers.onLogout();
-          this.$router.push({ name: ROUTE_NAMES.LOGIN.NAME });
-        }
+    async updateTask(params) {
+      const { id, taskName, status } = params;
+
+      try {
+        const response = await this.$apollo.mutate({
+          mutation: UPDATE_TASK,
+          variables: {
+            step_id: id,
+            name: taskName,
+            status: status,
+          },
+        });
+
+        let index = this.allTasks.findIndex(i => i.id == id);
+        this.allTasks[index].status = response.data.updateStep.status;
+        this.sortTasks();
+      } catch (error) {
+        if (checkApiRequestErrors({ that: this, error })) return;
       }
     },
 
     onTaskDeleted(id) {
-      let index = this.todoList.findIndex(i => i.id == id);
+      let index = this.allTasks.findIndex(i => i.id == id);
 
       if (index > -1) {
-        this.todoList.splice(index, 1);
+        this.allTasks.splice(index, 1);
       }
+
+      this.sortTasks();
     },
   },
 };
